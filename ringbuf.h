@@ -87,6 +87,17 @@ const void *
 ringbuf_head(const ringbuf_t *rb);
 
 /*
+ * Given a ring buffer rb and a pointer to a location within its
+ * contiguous buffer, return the a pointer to the next logical
+ * location in the ring buffer.
+ *
+ * If p does not point somewhere within the ring buffer's contiguous
+ * buffer, the function returns 0.
+ */
+void *
+ringbuf_nextp(ringbuf_t *rb, void *p);
+
+/*
  * Copy n bytes from a contiguous memory area src into the ring buffer
  * dst. Returns the ring buffer's new head pointer.
  *

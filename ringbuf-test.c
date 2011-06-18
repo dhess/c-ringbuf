@@ -1642,6 +1642,33 @@ main(int argc, char **argv)
     assert(ringbuf_head(rb2) == rb2->buf + 2);
     fprintf(stderr, "pass.\n");
 
+    /* ringbuf_next tests */
+
+    fprintf(stderr, "Test 67... ");
+    ringbuf_init(rb1);
+    assert(ringbuf_nextp(rb1, rb1->head) == rb1->head + 1);
+    fprintf(stderr, "pass.\n");
+           
+    fprintf(stderr, "Test 68... ");
+    ringbuf_init(rb1);
+    assert(ringbuf_nextp(rb1, rb1->buf + ringbuf_capacity(rb1) - 1) == rb1->buf + ringbuf_capacity(rb1));
+    fprintf(stderr, "pass.\n");
+           
+    fprintf(stderr, "Test 69... ");
+    ringbuf_init(rb1);
+    assert(ringbuf_nextp(rb1, rb1->buf + ringbuf_capacity(rb1)) == rb1->buf);
+    fprintf(stderr, "pass.\n");
+           
+    fprintf(stderr, "Test 70... ");
+    ringbuf_init(rb1);
+    assert(ringbuf_nextp(rb1, rb1->buf - 1) == 0);
+    fprintf(stderr, "pass.\n");
+           
+    fprintf(stderr, "Test 71... ");
+    ringbuf_init(rb1);
+    assert(ringbuf_nextp(rb1, rb1->buf + ringbuf_capacity(rb1) + 1) == 0);
+    fprintf(stderr, "pass.\n");
+           
     free((void *) rb1);
     free((void *) rb2);
     free(buf);
