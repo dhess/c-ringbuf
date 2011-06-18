@@ -105,6 +105,33 @@ main(int argc, char **argv)
     assert(ringbuf_tail(rb1) == ringbuf_head(rb1));
     END_TEST(test_num);
 
+    /* ringbuf_next tests */
+
+    START_NEW_TEST(test_num);
+    ringbuf_init(rb1);
+    assert(ringbuf_nextp(rb1, rb1->head) == rb1->head + 1);
+    END_TEST(test_num);
+           
+    START_NEW_TEST(test_num);
+    ringbuf_init(rb1);
+    assert(ringbuf_nextp(rb1, rb1->buf + ringbuf_capacity(rb1) - 1) == rb1->buf + ringbuf_capacity(rb1));
+    END_TEST(test_num);
+           
+    START_NEW_TEST(test_num);
+    ringbuf_init(rb1);
+    assert(ringbuf_nextp(rb1, rb1->buf + ringbuf_capacity(rb1)) == rb1->buf);
+    END_TEST(test_num);
+           
+    START_NEW_TEST(test_num);
+    ringbuf_init(rb1);
+    assert(ringbuf_nextp(rb1, rb1->buf - 1) == 0);
+    END_TEST(test_num);
+           
+    START_NEW_TEST(test_num);
+    ringbuf_init(rb1);
+    assert(ringbuf_nextp(rb1, rb1->buf + ringbuf_capacity(rb1) + 1) == 0);
+    END_TEST(test_num);
+           
     /*
      * Make sure strlen(test_pattern) is not a multiple of RINGBUF_SIZE - 1
      */
@@ -1650,33 +1677,6 @@ main(int argc, char **argv)
     assert(ringbuf_head(rb2) == rb2->buf + 2);
     END_TEST(test_num);
 
-    /* ringbuf_next tests */
-
-    START_NEW_TEST(test_num);
-    ringbuf_init(rb1);
-    assert(ringbuf_nextp(rb1, rb1->head) == rb1->head + 1);
-    END_TEST(test_num);
-           
-    START_NEW_TEST(test_num);
-    ringbuf_init(rb1);
-    assert(ringbuf_nextp(rb1, rb1->buf + ringbuf_capacity(rb1) - 1) == rb1->buf + ringbuf_capacity(rb1));
-    END_TEST(test_num);
-           
-    START_NEW_TEST(test_num);
-    ringbuf_init(rb1);
-    assert(ringbuf_nextp(rb1, rb1->buf + ringbuf_capacity(rb1)) == rb1->buf);
-    END_TEST(test_num);
-           
-    START_NEW_TEST(test_num);
-    ringbuf_init(rb1);
-    assert(ringbuf_nextp(rb1, rb1->buf - 1) == 0);
-    END_TEST(test_num);
-           
-    START_NEW_TEST(test_num);
-    ringbuf_init(rb1);
-    assert(ringbuf_nextp(rb1, rb1->buf + ringbuf_capacity(rb1) + 1) == 0);
-    END_TEST(test_num);
-           
     free((void *) rb1);
     free((void *) rb2);
     free(buf);
