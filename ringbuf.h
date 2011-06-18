@@ -42,11 +42,11 @@
  * unused, to distinguish the buffer-full state from the buffer-empty
  * state.
  */
-#define MAX_BUF 4096
+#define RINGBUF_SIZE 4096
 
 typedef struct ringbuf_t
 {
-    char buf[MAX_BUF];
+    char buf[RINGBUF_SIZE];
     void *head, *tail;
 } ringbuf_t;
 

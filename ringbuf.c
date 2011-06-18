@@ -91,7 +91,7 @@ ringbuf_head(const ringbuf_t *rb)
 static void *
 _ringbuf_nextp(ringbuf_t *rb, void *p)
 {
-    return rb->buf + ((++p - (const void *) rb->buf) % MAX_BUF);
+    return rb->buf + ((++p - (const void *) rb->buf) % RINGBUF_SIZE);
 }
 
 void *
