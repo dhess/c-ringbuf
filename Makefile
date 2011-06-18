@@ -11,8 +11,9 @@ test:	ringbuf-test
 help:
 	@echo "Targets:"
 	@echo
-	@echo "test - build and run ringbuf unit tests."
-	@echo "help - this message."
+	@echo "test  - build and run ringbuf unit tests."
+	@echo "clean - remove all targets."
+	@echo "help  - this message."
 
 ringbuf-test: ringbuf-test.o ringbuf.o
 	$(LD) -o ringbuf-test $(LDFLAGS) $^
