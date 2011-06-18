@@ -133,9 +133,12 @@ main(int argc, char **argv)
     END_TEST(test_num);
            
     /*
-     * Make sure strlen(test_pattern) is not a multiple of RINGBUF_SIZE - 1
+     * The length of test_pattern should not fit naturally into
+     * RINGBUF_SIZE, or else it won't be possible to detect proper
+     * wrapping of the head pointer.
      */
     const char test_pattern[] = "abcdefghijk";
+    assert((strlen(test_pattern) % RINGBUF_SIZE) != 0);
     void *buf = malloc(RINGBUF_SIZE * 2);
     fill_buffer(buf, RINGBUF_SIZE * 2, test_pattern);
 
@@ -411,7 +414,13 @@ main(int argc, char **argv)
     assert(strncmp(dst, buf, RINGBUF_SIZE * 2) == 0);
     END_TEST(test_num);
 
+    /*
+     * The length of test_pattern2 should not fit naturally into
+     * RINGBUF_SIZE, or else it won't be possible to detect proper
+     * wrapping of the head pointer.
+     */
     const char test_pattern2[] = "0123456789A";
+    assert((strlen(test_pattern2) % RINGBUF_SIZE) != 0);
     void *buf2 = malloc(RINGBUF_SIZE * 2);
     fill_buffer(buf2, RINGBUF_SIZE * 2, test_pattern2);
 
