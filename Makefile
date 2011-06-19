@@ -1,6 +1,9 @@
 CC=clang
+CFLAGS=-O0 -g -Wall -ftrapv -fcatch-undefined-behavior
+
+# or, for gcc...
 #CC=gcc
-CFLAGS=-O0 -g -Wall
+#CFLAGS=-O0 -g -Wall
 
 LD=$(CC)
 LDFLAGS=-g
