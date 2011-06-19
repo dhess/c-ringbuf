@@ -11,15 +11,19 @@ LDFLAGS=-g
 test:	ringbuf-test
 	./ringbuf-test
 
-coverage:	ringbuf-test-gcov
-		./ringbuf-test-gcov
-		gcov -o ringbuf-gcov.o ringbuf.c
+coverage: ringbuf-test-gcov
+	  ./ringbuf-test-gcov
+	  gcov -o ringbuf-gcov.o ringbuf.c
+
+valgrind: ringbuf-test
+	  valgrind ./ringbuf-test
 
 help:
 	@echo "Targets:"
 	@echo
 	@echo "test  - build and run ringbuf unit tests."
 	@echo "coverage - use gcov to check test coverage of ringbuf.c."
+	@echo "valgrind - use valgrind to check for memory leaks."
 	@echo "clean - remove all targets."
 	@echo "help  - this message."
 
