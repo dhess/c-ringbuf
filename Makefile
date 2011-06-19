@@ -28,6 +28,6 @@ ringbuf.o: ringbuf.c ringbuf.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f test-ringbuf *.o
+	rm -f ringbuf-test *.o
 
 .PHONY:	clean
