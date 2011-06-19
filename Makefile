@@ -21,6 +21,9 @@ help:
 ringbuf-test: ringbuf-test.o ringbuf.o
 	$(LD) -o ringbuf-test $(LDFLAGS) $^
 
+ringbuf-test.o: ringbuf-test.c ringbuf.h
+	$(CC) $(CFLAGS) -c $< -o $@
+
 ringbuf.o: ringbuf.c ringbuf.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
