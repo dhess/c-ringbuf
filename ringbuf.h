@@ -11,8 +11,8 @@
  * the public domain worldwide. This software is distributed without
  * any warranty.
  *
- * For the full statement of the dedication, see the Creative Commons
- * CC0 Public Domain Dedication at
+ * You should have received a copy of the CC0 Public Domain Dedication
+ * along with this software. If not, see
  * <http://creativecommons.org/publicdomain/zero/1.0/>.
  */
 
