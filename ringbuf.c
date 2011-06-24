@@ -23,7 +23,7 @@
 #include <assert.h>
 
 size_t
-ringbuf_buffer_size(ringbuf_t *rb)
+ringbuf_buffer_size(const ringbuf_t *rb)
 {
     return _RINGBUF_SIZE;
 }
