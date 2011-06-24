@@ -1686,6 +1686,228 @@ main(int argc, char **argv)
     assert(ringbuf_head(rb2) == rb2->buf + 2);
     END_TEST(test_num);
 
+    /* ringbuf_findchr */
+
+    START_NEW_TEST(test_num);
+    ringbuf_init(rb1);
+    memset(rb1->buf, 1, RINGBUF_SIZE);
+    assert(ringbuf_findchr(rb1, 'a', 0) == 0);
+    END_TEST(test_num);
+
+    START_NEW_TEST(test_num);
+    ringbuf_init(rb1);
+    memset(rb1->buf, 1, RINGBUF_SIZE);
+    assert(ringbuf_memcpy_into(rb1, buf, 2) == ringbuf_head(rb1));
+    assert(ringbuf_findchr(rb1, 'a', 0) == 0);
+    END_TEST(test_num);
+
+    START_NEW_TEST(test_num);
+    ringbuf_init(rb1);
+    memset(rb1->buf, 1, RINGBUF_SIZE);
+    assert(ringbuf_memcpy_into(rb1, buf, 2) == ringbuf_head(rb1));
+    assert(ringbuf_findchr(rb1, 'a', 1) == ringbuf_bytes_used(rb1));
+    END_TEST(test_num);
+
+    START_NEW_TEST(test_num);
+    ringbuf_init(rb1);
+    memset(rb1->buf, 1, RINGBUF_SIZE);
+    assert(ringbuf_memcpy_into(rb1, buf, 2) == ringbuf_head(rb1));
+    assert(ringbuf_findchr(rb1, 'b', 0) == 1);
+    END_TEST(test_num);
+
+    START_NEW_TEST(test_num);
+    ringbuf_init(rb1);
+    memset(rb1->buf, 1, RINGBUF_SIZE);
+    assert(ringbuf_memcpy_into(rb1, buf, 2) == ringbuf_head(rb1));
+    assert(ringbuf_findchr(rb1, 'b', 1) == 1);
+    END_TEST(test_num);
+
+    START_NEW_TEST(test_num);
+    ringbuf_init(rb1);
+    memset(rb1->buf, 1, RINGBUF_SIZE);
+    assert(ringbuf_memcpy_into(rb1, buf, 2) == ringbuf_head(rb1));
+    assert(ringbuf_findchr(rb1, 'b', 2) == ringbuf_bytes_used(rb1));
+    END_TEST(test_num);
+
+    START_NEW_TEST(test_num);
+    ringbuf_init(rb1);
+    memset(rb1->buf, 1, RINGBUF_SIZE);
+    assert(ringbuf_memcpy_into(rb1, buf, 2) == ringbuf_head(rb1));
+    assert(ringbuf_findchr(rb1, 1, 0) == ringbuf_bytes_used(rb1));
+    END_TEST(test_num);
+
+    START_NEW_TEST(test_num);
+    ringbuf_init(rb1);
+    memset(rb1->buf, 1, RINGBUF_SIZE);
+    assert(ringbuf_memcpy_into(rb1, buf, strlen(test_pattern) + 1) == ringbuf_head(rb1));
+    assert(ringbuf_findchr(rb1, 'a', 1) == strlen(test_pattern));
+    END_TEST(test_num);
+
+    START_NEW_TEST(test_num);
+    ringbuf_init(rb1);
+    memset(rb1->buf, 1, RINGBUF_SIZE);
+    assert(ringbuf_memcpy_into(rb1, buf, strlen(test_pattern) + 1) == ringbuf_head(rb1));
+    assert(ringbuf_findchr(rb1, 'a', strlen(test_pattern)) == strlen(test_pattern));
+    END_TEST(test_num);
+
+    START_NEW_TEST(test_num);
+    ringbuf_init(rb1);
+    memset(rb1->buf, 1, RINGBUF_SIZE);
+    assert(ringbuf_memcpy_into(rb1, buf, strlen(test_pattern) + 1) == ringbuf_head(rb1));
+    assert(ringbuf_findchr(rb1, 'a', strlen(test_pattern) + 1) == ringbuf_bytes_used(rb1));
+    END_TEST(test_num);
+
+    START_NEW_TEST(test_num);
+    ringbuf_init(rb1);
+    memset(rb1->buf, 1, RINGBUF_SIZE);
+    assert(ringbuf_memcpy_into(rb1, buf, (strlen(test_pattern) * 2) - 1) == ringbuf_head(rb1));
+    assert(ringbuf_findchr(rb1, 'a', strlen(test_pattern) + 1) == ringbuf_bytes_used(rb1));
+    END_TEST(test_num);
+
+    START_NEW_TEST(test_num);
+    ringbuf_init(rb1);
+    memset(rb1->buf, 1, RINGBUF_SIZE);
+    assert(ringbuf_memcpy_into(rb1, buf, 3) == ringbuf_head(rb1));
+    assert(ringbuf_memcpy_from(dst, rb1, 1) == ringbuf_tail(rb1));
+    assert(ringbuf_findchr(rb1, 'a', 0) == ringbuf_bytes_used(rb1));
+    END_TEST(test_num);
+
+    START_NEW_TEST(test_num);
+    ringbuf_init(rb1);
+    memset(rb1->buf, 1, RINGBUF_SIZE);
+    assert(ringbuf_memcpy_into(rb1, buf, 3) == ringbuf_head(rb1));
+    assert(ringbuf_memcpy_from(dst, rb1, 1) == ringbuf_tail(rb1));
+    assert(ringbuf_findchr(rb1, 'b', 0) == 0);
+    END_TEST(test_num);
+
+    START_NEW_TEST(test_num);
+    ringbuf_init(rb1);
+    memset(rb1->buf, 1, RINGBUF_SIZE);
+    assert(ringbuf_memcpy_into(rb1, buf, 3) == ringbuf_head(rb1));
+    assert(ringbuf_memcpy_from(dst, rb1, 2) == ringbuf_tail(rb1));
+    assert(ringbuf_findchr(rb1, 'b', 0) == ringbuf_bytes_used(rb1));
+    END_TEST(test_num);
+
+    /* find 'd' in last byte of contiguous buffer */
+    START_NEW_TEST(test_num);
+    ringbuf_init(rb1);
+    memset(rb1->buf, 1, RINGBUF_SIZE);
+    assert(ringbuf_memcpy_into(rb1, buf, RINGBUF_SIZE - 1) == ringbuf_head(rb1));
+    assert(ringbuf_memcpy_from(dst, rb1, RINGBUF_SIZE - 4) == ringbuf_tail(rb1));
+    assert(ringbuf_findchr(rb1, 'd', 0) == 3);
+    END_TEST(test_num);
+
+    /*
+     * Find just before wrap with offset 1.
+     */
+    START_NEW_TEST(test_num);
+    ringbuf_init(rb1);
+    memset(rb1->buf, 1, RINGBUF_SIZE);
+    /* head will wrap around and overflow by 2 bytes */
+    assert(ringbuf_memcpy_into(rb1, buf, RINGBUF_SIZE + 1) == ringbuf_head(rb1));
+    assert(ringbuf_memcpy_from(dst, rb1, RINGBUF_SIZE - 4) == ringbuf_tail(rb1));
+    assert(ringbuf_findchr(rb1, 'd', 1) == 1);
+    END_TEST(test_num);
+
+    /*
+     * Miss the 'd' at the end due to offset 2.
+     */
+    START_NEW_TEST(test_num);
+    ringbuf_init(rb1);
+    memset(rb1->buf, 1, RINGBUF_SIZE);
+    /* head will wrap around and overflow by 2 bytes */
+    assert(ringbuf_memcpy_into(rb1, buf, RINGBUF_SIZE + 1) == ringbuf_head(rb1));
+    assert(ringbuf_memcpy_from(dst, rb1, RINGBUF_SIZE - 4) == ringbuf_tail(rb1));
+    assert(ringbuf_findchr(rb1, 'd', 2) == ringbuf_bytes_used(rb1));
+    END_TEST(test_num);
+
+    /*
+     * should *not* find 'a' in the first byte of the contiguous
+     * buffer when head wraps.
+     */
+    START_NEW_TEST(test_num);
+    ringbuf_init(rb1);
+    memset(rb1->buf, 1, RINGBUF_SIZE);
+    /* head will wrap around and overflow by 1 byte */
+    assert(ringbuf_memcpy_into(rb1, buf, RINGBUF_SIZE) == ringbuf_head(rb1));
+    assert(ringbuf_memcpy_from(dst, rb1, RINGBUF_SIZE - 4) == ringbuf_tail(rb1));
+    assert(ringbuf_findchr(rb1, 'a', 0) == ringbuf_bytes_used(rb1));
+    END_TEST(test_num);
+
+    /*
+     * Should find 'e' at first byte of contiguous buffer (i.e.,
+     * should wrap during search).
+     */
+    START_NEW_TEST(test_num);
+    ringbuf_init(rb1);
+    memset(rb1->buf, 1, RINGBUF_SIZE);
+    /* head will wrap around and overflow by 2 bytes */
+    assert(ringbuf_memcpy_into(rb1, buf, RINGBUF_SIZE + 1) == ringbuf_head(rb1));
+    assert(ringbuf_memcpy_from(dst, rb1, RINGBUF_SIZE - 4) == ringbuf_tail(rb1));
+    assert(ringbuf_findchr(rb1, 'e', 0) == 2);
+    END_TEST(test_num);
+
+    /*
+     * Should find 'e' at first byte, with offset 1.
+     */
+    START_NEW_TEST(test_num);
+    ringbuf_init(rb1);
+    memset(rb1->buf, 1, RINGBUF_SIZE);
+    /* head will wrap around and overflow by 2 bytes */
+    assert(ringbuf_memcpy_into(rb1, buf, RINGBUF_SIZE + 1) == ringbuf_head(rb1));
+    assert(ringbuf_memcpy_from(dst, rb1, RINGBUF_SIZE - 4) == ringbuf_tail(rb1));
+    assert(ringbuf_findchr(rb1, 'e', 1) == 2);
+    END_TEST(test_num);
+    
+    /*
+     * Search begins at first byte due to offset 2, should find 'e'.
+     */
+    START_NEW_TEST(test_num);
+    ringbuf_init(rb1);
+    memset(rb1->buf, 1, RINGBUF_SIZE);
+    /* head will wrap around and overflow by 2 bytes */
+    assert(ringbuf_memcpy_into(rb1, buf, RINGBUF_SIZE + 1) == ringbuf_head(rb1));
+    assert(ringbuf_memcpy_from(dst, rb1, RINGBUF_SIZE - 4) == ringbuf_tail(rb1));
+    assert(ringbuf_findchr(rb1, 'e', 2) == 2);
+    END_TEST(test_num);
+    
+    /*
+     * Miss the 'e' at first byte due to offset 3.
+     */
+    START_NEW_TEST(test_num);
+    ringbuf_init(rb1);
+    memset(rb1->buf, 1, RINGBUF_SIZE);
+    /* head will wrap around and overflow by 2 bytes */
+    assert(ringbuf_memcpy_into(rb1, buf, RINGBUF_SIZE + 1) == ringbuf_head(rb1));
+    assert(ringbuf_memcpy_from(dst, rb1, RINGBUF_SIZE - 4) == ringbuf_tail(rb1));
+    assert(ringbuf_findchr(rb1, 'e', 3) == ringbuf_bytes_used(rb1));
+    END_TEST(test_num);
+    
+    /*
+     * Should *not* find the 'c' left over from overwritten contents
+     * (where head is currently pointing).
+     */
+    START_NEW_TEST(test_num);
+    ringbuf_init(rb1);
+    memset(rb1->buf, 1, RINGBUF_SIZE);
+    /* head will wrap around and overflow by 2 bytes */
+    assert(ringbuf_memcpy_into(rb1, buf, RINGBUF_SIZE + 1) == ringbuf_head(rb1));
+    assert(ringbuf_memcpy_from(dst, rb1, RINGBUF_SIZE - 1) == ringbuf_tail(rb1));
+    assert(ringbuf_findchr(rb1, 'c', 0) == ringbuf_bytes_used(rb1));
+    END_TEST(test_num);
+    
+    /*
+     * Should *not* find the 'd' left over from overwritten contents.
+     */
+    START_NEW_TEST(test_num);
+    ringbuf_init(rb1);
+    memset(rb1->buf, 1, RINGBUF_SIZE);
+    /* head will wrap around and overflow by 2 bytes */
+    assert(ringbuf_memcpy_into(rb1, buf, RINGBUF_SIZE + 1) == ringbuf_head(rb1));
+    assert(ringbuf_memcpy_from(dst, rb1, RINGBUF_SIZE - 1) == ringbuf_tail(rb1));
+    assert(ringbuf_findchr(rb1, 'd', 1) == ringbuf_bytes_used(rb1));
+    END_TEST(test_num);
+    
     free((void *) rb1);
     free((void *) rb2);
     free(buf);

@@ -98,6 +98,17 @@ void *
 ringbuf_nextp(ringbuf_t *rb, void *p);
 
 /*
+ * Locate the first occurrence of character c (converted to a char) in
+ * ring buffer rb, beginning the search at offset bytes from the ring
+ * buffer's tail pointer. The function returns the offset of the
+ * character from the ring buffer's tail pointer, if found. If c does
+ * not occur in the ring buffer, the function returns the number of
+ * bytes used in the ring buffer.
+ */
+size_t
+ringbuf_findchr(const ringbuf_t *rb, int c, size_t offset);
+ 
+/*
  * Copy n bytes from a contiguous memory area src into the ring buffer
  * dst. Returns the ring buffer's new head pointer.
  *

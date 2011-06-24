@@ -103,6 +103,25 @@ ringbuf_nextp(ringbuf_t *rb, void *p)
         return _ringbuf_nextp(rb, p);
 }
 
+size_t
+ringbuf_findchr(const ringbuf_t *rb, int c, size_t offset)
+{
+    const void *bufend = ringbuf_end(rb);
+    size_t bytes_used = ringbuf_bytes_used(rb);
+    if (offset >= bytes_used)
+        return bytes_used;
+
+    const void *start = rb->buf +
+        (((rb->tail - (const void *) rb->buf) + offset) % RINGBUF_SIZE);
+    assert(bufend > start);
+    size_t n = MIN(bufend - start, bytes_used - offset);
+    const void *found = memchr(start, c, n);
+    if (found)
+        return offset + found - start;
+    else
+        return ringbuf_findchr(rb, c, offset + n);
+}
+
 void *
 ringbuf_memcpy_into(ringbuf_t *dst, const void *src, size_t count)
 {
