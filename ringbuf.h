@@ -45,15 +45,13 @@ typedef struct ringbuf_t
 } ringbuf_t;
 
 /*
- * The size of the internal buffer, in bytes. One byte wil always be
- * unused, to distinguish the buffer-full state from the buffer-empty
- * state.
+ * The size of the internal buffer, in bytes. One byte will always be
+ * unused, to distinguish the "buffer full" state from the "buffer
+ * empty" state.
  *
- * For future-proofness, use this function ringbuf_buffer_size to
- * obtain this value rather than the #define'd value, as it leaves
- * open the possibility in the future of ring buffers with dynamic
- * (and different) sizes. (For the most part, however, you should not
- * need to use this function.
+ * For future-proofness, use this function than the #define'd
+ * _RINGBUF_SIZE value; using the function makes it easier later to
+ * support ring buffers with dynamic (and different) sizes.
  */
 size_t
 ringbuf_buffer_size(const ringbuf_t *rb);
