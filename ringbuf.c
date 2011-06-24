@@ -22,6 +22,12 @@
 #include <sys/param.h>
 #include <assert.h>
 
+size_t
+ringbuf_buffer_size(ringbuf_t *rb)
+{
+    return _RINGBUF_SIZE;
+}
+
 void
 ringbuf_init(ringbuf_t *rb)
 {
@@ -91,7 +97,8 @@ ringbuf_head(const ringbuf_t *rb)
 static void *
 _ringbuf_nextp(ringbuf_t *rb, void *p)
 {
-    return rb->buf + ((++p - (const void *) rb->buf) % RINGBUF_SIZE);
+    return rb->buf +
+        ((++p - (const void *) rb->buf) % ringbuf_buffer_size(rb));
 }
 
 void *
@@ -112,7 +119,8 @@ ringbuf_findchr(const ringbuf_t *rb, int c, size_t offset)
         return bytes_used;
 
     const void *start = rb->buf +
-        (((rb->tail - (const void *) rb->buf) + offset) % RINGBUF_SIZE);
+        (((rb->tail -
+           (const void *) rb->buf) + offset) % ringbuf_buffer_size(rb));
     assert(bufend > start);
     size_t n = MIN(bufend - start, bytes_used - offset);
     const void *found = memchr(start, c, n);

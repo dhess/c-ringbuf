@@ -37,18 +37,26 @@
 #include <stddef.h>
 #include <sys/types.h>
 
+#define _RINGBUF_SIZE 4096
+typedef struct ringbuf_t
+{
+    char buf[_RINGBUF_SIZE];
+    void *head, *tail;
+} ringbuf_t;
+
 /*
  * The size of the internal buffer, in bytes. One byte wil always be
  * unused, to distinguish the buffer-full state from the buffer-empty
  * state.
+ *
+ * For future-proofness, use this function ringbuf_buffer_size to
+ * obtain this value rather than the #define'd value, as it leaves
+ * open the possibility in the future of ring buffers with dynamic
+ * (and different) sizes. (For the most part, however, you should not
+ * need to use this function.
  */
-#define RINGBUF_SIZE 4096
-
-typedef struct ringbuf_t
-{
-    char buf[RINGBUF_SIZE];
-    void *head, *tail;
-} ringbuf_t;
+size_t
+ringbuf_buffer_size(ringbuf_t *rb);
 
 /*
  * Initialize/reset a ring buffer.
