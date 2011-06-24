@@ -37,7 +37,7 @@ ringbuf_init(ringbuf_t *rb)
 size_t
 ringbuf_capacity(const ringbuf_t *rb)
 {
-    return sizeof(rb->buf) - 1;
+    return ringbuf_buffer_size(rb) - 1;
 }
 
 /*
@@ -48,7 +48,7 @@ ringbuf_capacity(const ringbuf_t *rb)
 static const void *
 ringbuf_end(const ringbuf_t *rb)
 {
-    return rb->buf + sizeof(rb->buf);
+    return rb->buf + ringbuf_buffer_size(rb);
 }
 
 size_t
