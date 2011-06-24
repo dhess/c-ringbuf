@@ -1,14 +1,14 @@
 * WHAT
-  ringbuf.[ch] is a simple ring buffer implementation in C. 
+  ringbuf is a simple ring buffer implementation in C. 
 
   It includes support for read(2) and write(2) operations on ring
-  buffers, memcpys into and out of ring buffers, and copies between
-  ring buffers. It also supports searching for single characters, so
-  that line-oriented or character-delimited network protocols can
-  easily be supported.
+  buffers, memcpy's into and out of ring buffers, and copies between
+  ring buffers. It also supports searching for single characters, for
+  use with that line-oriented or character-delimited network
+  protocols.
 
   It should be fairly straightforward to extend ringbuf to support
-  other C library operations that operate on buffers, e.g., recv.
+  other C library operations that operate on buffers, e.g., recv(2).
 
 * WHY
   I implemented ringbuf because I needed a simple, dependency-free
@@ -17,7 +17,7 @@
 * INSTALLING
   ringbuf is not a library as such, so it doesn't need to be
   installed. Just copy the ringbuf.[ch] source files into your
-  project. (Also see [[*LICENSE][LICENSE]].)
+  project. (Also see LICENSE below.)
 
   ringbuf has no dependencies beyond an ISO C90 standard library.
 
@@ -43,5 +43,6 @@
   the file COPYING, included in this distribution, for the specifics.
 
 * CONTACT
-  Drew Hess <mailto:dhess-src@bothan.net>
+  Drew Hess <dhess-src@bothan.net>
+
   http://drewhess.com/
