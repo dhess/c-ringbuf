@@ -49,7 +49,7 @@ typedef struct ringbuf_t
  * unused, to distinguish the "buffer full" state from the "buffer
  * empty" state.
  *
- * For future-proofness, use this function than the #define'd
+ * For future-proofness, use this function rather than the #define'd
  * _RINGBUF_SIZE value; using the function makes it easier later to
  * support ring buffers with dynamic (and different) sizes.
  */
