@@ -25,7 +25,7 @@
 size_t
 ringbuf_buffer_size(const ringbuf_t *rb)
 {
-    return _RINGBUF_SIZE;
+    return RINGBUF_SIZE;
 }
 
 void
@@ -95,7 +95,7 @@ ringbuf_head(const ringbuf_t *rb)
  * functions where the check is unnecessary.
  */
 static void *
-_ringbuf_nextp(ringbuf_t *rb, void *p)
+unchecked_nextp(ringbuf_t *rb, void *p)
 {
     return rb->buf +
         ((++p - (const void *) rb->buf) % ringbuf_buffer_size(rb));
@@ -107,7 +107,7 @@ ringbuf_nextp(ringbuf_t *rb, void *p)
     if (p < (void *) rb->buf || p >= ringbuf_end(rb))
         return 0;
     else
-        return _ringbuf_nextp(rb, p);
+        return unchecked_nextp(rb, p);
 }
 
 size_t
@@ -151,7 +151,7 @@ ringbuf_memcpy_into(ringbuf_t *dst, const void *src, size_t count)
     }
 
     if (overflow) {
-        dst->tail = _ringbuf_nextp(dst, dst->head);
+        dst->tail = unchecked_nextp(dst, dst->head);
         assert(ringbuf_is_full(dst));
     }
 
@@ -178,7 +178,7 @@ ringbuf_read(int fd, ringbuf_t *rb, size_t count)
 
         /* fix up the tail pointer if an overflow occurred */
         if (n > nfree) {
-            rb->tail = _ringbuf_nextp(rb, rb->head);
+            rb->tail = unchecked_nextp(rb, rb->head);
             assert(ringbuf_is_full(rb));
         }
     }
@@ -267,7 +267,7 @@ ringbuf_copy(ringbuf_t *dst, ringbuf_t *src, size_t count)
     assert(count + ringbuf_bytes_used(src) == src_bytes_used);
     
     if (overflow) {
-        dst->tail = _ringbuf_nextp(dst, dst->head);
+        dst->tail = unchecked_nextp(dst, dst->head);
         assert(ringbuf_is_full(dst));
     }
 

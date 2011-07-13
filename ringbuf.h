@@ -1,5 +1,5 @@
-#ifndef _RINGBUF_H_
-#define _RINGBUF_H_
+#ifndef INCLUDED_RINGBUF_H
+#define INCLUDED_RINGBUF_H
 
 /*
  * ringbuf.h - C ring buffer (FIFO) interface.
@@ -37,10 +37,10 @@
 #include <stddef.h>
 #include <sys/types.h>
 
-#define _RINGBUF_SIZE 4096
+#define RINGBUF_SIZE 4096
 typedef struct ringbuf_t
 {
-    char buf[_RINGBUF_SIZE];
+    char buf[RINGBUF_SIZE];
     void *head, *tail;
 } ringbuf_t;
 
@@ -50,7 +50,7 @@ typedef struct ringbuf_t
  * empty" state.
  *
  * For future-proofness, use this function rather than the #define'd
- * _RINGBUF_SIZE value; using the function makes it easier later to
+ * RINGBUF_SIZE value; using the function makes it easier later to
  * support ring buffers with dynamic (and different) sizes.
  */
 size_t
@@ -221,4 +221,4 @@ ringbuf_write(int fd, ringbuf_t *rb, size_t count);
 void *
 ringbuf_copy(ringbuf_t *dst, ringbuf_t *src, size_t count);
 
-#endif /* _RINGBUF_H_ */
+#endif /* INCLUDED_RINGBUF_H */
