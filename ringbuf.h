@@ -109,13 +109,6 @@ const void *
 ringbuf_head(const struct ringbuf_t *rb);
 
 /*
- * Const access to the beginning of the linear buffer used to
- * implement the ring buffer.
- */
-const void *
-ringbuf_base(const struct ringbuf_t *rb);
-
-/*
  * Locate the first occurrence of character c (converted to a char) in
  * ring buffer rb, beginning the search at offset bytes from the ring
  * buffer's tail pointer. The function returns the offset of the

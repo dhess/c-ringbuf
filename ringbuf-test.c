@@ -101,6 +101,10 @@ main(int argc, char **argv)
      * tests may break.
      */
     
+    /* We use the base pointer for some implementation testing. */
+       
+    const void *rb1_base = ringbuf_head(rb1);
+
     /* Initial conditions */
     START_NEW_TEST(test_num);
     assert(ringbuf_buffer_size(rb1) == RINGBUF_DEFAULT_SIZE);
@@ -110,7 +114,7 @@ main(int argc, char **argv)
     assert(!ringbuf_is_full(rb1));
     assert(ringbuf_is_empty(rb1));
     assert(ringbuf_tail(rb1) == ringbuf_head(rb1));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1));
+    assert(ringbuf_tail(rb1) == rb1_base);
     END_TEST(test_num);
 
     /* freeing a ring buffer sets the pointer to 0 */
@@ -120,31 +124,6 @@ main(int argc, char **argv)
     END_TEST(test_num);
 
     rb1 = ringbuf_new();
-
-    /*
-     * ringbuf_base; I happen to know it should have the same addr as
-     * the ring buffer...
-     */
-    START_NEW_TEST(test_num);
-    assert(ringbuf_base(rb1) == rb1);
-    END_TEST(test_num);
-
-    /*
-     * ... and writing bytes into the ring buffer shouldn't change
-     * it...
-     */
-    START_NEW_TEST(test_num);
-    ringbuf_memset(rb1, 1, 8);
-    assert(ringbuf_base(rb1) == rb1);
-    END_TEST(test_num);
-
-    /*
-     * ... nor should an overflow.
-     */
-    START_NEW_TEST(test_num);
-    ringbuf_memset(rb1, 1, ringbuf_buffer_size(rb1));
-    assert(ringbuf_base(rb1) == rb1);
-    END_TEST(test_num);
 
     /* ringbuf_reset tests */
     START_NEW_TEST(test_num);
@@ -157,7 +136,7 @@ main(int argc, char **argv)
     assert(!ringbuf_is_full(rb1));
     assert(ringbuf_is_empty(rb1));
     assert(ringbuf_tail(rb1) == ringbuf_head(rb1));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1));
+    assert(ringbuf_tail(rb1) == rb1_base);
     END_TEST(test_num);
 
     START_NEW_TEST(test_num);
@@ -170,7 +149,7 @@ main(int argc, char **argv)
     assert(!ringbuf_is_full(rb1));
     assert(ringbuf_is_empty(rb1));
     assert(ringbuf_tail(rb1) == ringbuf_head(rb1));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1));
+    assert(ringbuf_tail(rb1) == rb1_base);
     END_TEST(test_num);
 
     /* ringbuf_memset with zero count */
@@ -249,9 +228,9 @@ main(int argc, char **argv)
     assert(ringbuf_is_full(rb1));
     assert(!ringbuf_is_empty(rb1));
     /* head should point to the beginning of the buffer */
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1));
+    assert(ringbuf_head(rb1) == rb1_base);
     /* tail should have bumped forward by 1 byte */
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + 1);
+    assert(ringbuf_tail(rb1) == rb1_base + 1);
     assert(strncmp(ringbuf_tail(rb1), buf, RINGBUF_DEFAULT_SIZE - 1) == 0);
     END_TEST(test_num);
 
@@ -266,9 +245,9 @@ main(int argc, char **argv)
     assert(ringbuf_is_full(rb1));
     assert(!ringbuf_is_empty(rb1));
     /* head should point to the beginning of the buffer */
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1));
+    assert(ringbuf_head(rb1) == rb1_base);
     /* tail should have bumped forward by 1 byte */
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + 1);
+    assert(ringbuf_tail(rb1) == rb1_base + 1);
     assert(strncmp(ringbuf_tail(rb1), buf, RINGBUF_DEFAULT_SIZE - 1) == 0);
     END_TEST(test_num);
 
@@ -285,8 +264,8 @@ main(int argc, char **argv)
     assert(ringbuf_bytes_used(rb1) == ringbuf_capacity(rb1));
     assert(ringbuf_is_full(rb1));
     assert(!ringbuf_is_empty(rb1));
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + 1);
+    assert(ringbuf_head(rb1) == rb1_base);
+    assert(ringbuf_tail(rb1) == rb1_base + 1);
     assert(strncmp(ringbuf_tail(rb1), buf, RINGBUF_DEFAULT_SIZE - 1) == 0);
     END_TEST(test_num);
     
@@ -302,8 +281,8 @@ main(int argc, char **argv)
     assert(ringbuf_bytes_used(rb1) == ringbuf_capacity(rb1));
     assert(ringbuf_is_full(rb1));
     assert(!ringbuf_is_empty(rb1));
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + 1);
+    assert(ringbuf_head(rb1) == rb1_base);
+    assert(ringbuf_tail(rb1) == rb1_base + 1);
     assert(strncmp(ringbuf_tail(rb1), buf + RINGBUF_DEFAULT_SIZE, RINGBUF_DEFAULT_SIZE - 1) == 0);
     END_TEST(test_num);
 
@@ -402,9 +381,9 @@ main(int argc, char **argv)
     assert(ringbuf_is_full(rb1));
     assert(!ringbuf_is_empty(rb1));
     /* head should point to the beginning of the buffer */
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1));
+    assert(ringbuf_head(rb1) == rb1_base);
     /* tail should have bumped forward by 1 byte */
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + 1);
+    assert(ringbuf_tail(rb1) == rb1_base + 1);
     assert(strncmp(ringbuf_tail(rb1), buf + 1, RINGBUF_DEFAULT_SIZE - 1) == 0);
     END_TEST(test_num);
 
@@ -421,9 +400,9 @@ main(int argc, char **argv)
     assert(ringbuf_is_full(rb1));
     assert(!ringbuf_is_empty(rb1));
     /* head should point to the beginning of the buffer */
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1));
+    assert(ringbuf_head(rb1) == rb1_base);
     /* tail should have bumped forward by 1 byte */
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + 1);
+    assert(ringbuf_tail(rb1) == rb1_base + 1);
     assert(strncmp(ringbuf_tail(rb1), buf + 1, RINGBUF_DEFAULT_SIZE - 1) == 0);
     END_TEST(test_num);
 
@@ -438,10 +417,10 @@ main(int argc, char **argv)
     assert(ringbuf_bytes_used(rb1) == ringbuf_capacity(rb1));
     assert(ringbuf_is_full(rb1));
     assert(!ringbuf_is_empty(rb1));
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1) + 1);
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + 2);
+    assert(ringbuf_head(rb1) == rb1_base + 1);
+    assert(ringbuf_tail(rb1) == rb1_base + 2);
     assert(strncmp(ringbuf_tail(rb1), buf + 2, RINGBUF_DEFAULT_SIZE - 2) == 0);
-    assert(strncmp(ringbuf_base(rb1), buf + RINGBUF_DEFAULT_SIZE, 1) == 0);
+    assert(strncmp(rb1_base, buf + RINGBUF_DEFAULT_SIZE, 1) == 0);
     END_TEST(test_num);
 
     rdfd = mkstemps(rd_template, strlen("ringbuf"));
@@ -541,9 +520,9 @@ main(int argc, char **argv)
     assert(ringbuf_is_full(rb1));
     assert(!ringbuf_is_empty(rb1));
     /* head should point to the beginning of the buffer */
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1));
+    assert(ringbuf_head(rb1) == rb1_base);
     /* tail should have bumped forward by 1 byte */
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + 1);
+    assert(ringbuf_tail(rb1) == rb1_base + 1);
     assert(strncmp(ringbuf_tail(rb1), buf + 1, RINGBUF_DEFAULT_SIZE - 1) == 0);
     END_TEST(test_num);
 
@@ -561,9 +540,9 @@ main(int argc, char **argv)
     assert(ringbuf_is_full(rb1));
     assert(!ringbuf_is_empty(rb1));
     /* head should point to the beginning of the buffer */
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1));
+    assert(ringbuf_head(rb1) == rb1_base);
     /* tail should have bumped forward by 1 byte */
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + 1);
+    assert(ringbuf_tail(rb1) == rb1_base + 1);
     assert(strncmp(ringbuf_tail(rb1), buf + 1, RINGBUF_DEFAULT_SIZE - 1) == 0);
     END_TEST(test_num);
 
@@ -580,9 +559,9 @@ main(int argc, char **argv)
     assert(ringbuf_is_full(rb1));
     assert(!ringbuf_is_empty(rb1));
     /* head should point to the beginning of the buffer */
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1));
+    assert(ringbuf_head(rb1) == rb1_base);
     /* tail should have bumped forward by 1 byte */
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + 1);
+    assert(ringbuf_tail(rb1) == rb1_base + 1);
     assert(strncmp(ringbuf_tail(rb1), buf + 1, RINGBUF_DEFAULT_SIZE - 1) == 0);
     END_TEST(test_num);
 
@@ -601,7 +580,7 @@ main(int argc, char **argv)
     assert(!ringbuf_is_full(rb1));
     assert(ringbuf_is_empty(rb1));
     assert(ringbuf_tail(rb1) == ringbuf_head(rb1));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1));
+    assert(ringbuf_tail(rb1) == rb1_base);
     assert(strncmp(dst, buf, RINGBUF_DEFAULT_SIZE * 2) == 0);
     END_TEST(test_num);
 
@@ -628,7 +607,7 @@ main(int argc, char **argv)
     assert(ringbuf_bytes_used(rb1) == strlen(test_pattern2));
     assert(!ringbuf_is_full(rb1));
     assert(!ringbuf_is_empty(rb1));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1));
+    assert(ringbuf_tail(rb1) == rb1_base);
     assert(strncmp(dst, buf, RINGBUF_DEFAULT_SIZE * 2) == 0);
     END_TEST(test_num);
 
@@ -645,7 +624,7 @@ main(int argc, char **argv)
     assert(ringbuf_bytes_used(rb1) == strlen(test_pattern2) - 3);
     assert(!ringbuf_is_full(rb1));
     assert(!ringbuf_is_empty(rb1));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + 3);
+    assert(ringbuf_tail(rb1) == rb1_base + 3);
     assert(ringbuf_head(rb1) == ringbuf_tail(rb1) + (strlen(test_pattern2) - 3));
     assert(strncmp(dst, test_pattern2, 3) == 0);
     assert(strncmp(dst + 3, buf + 3, RINGBUF_DEFAULT_SIZE * 2 - 3) == 0);
@@ -665,7 +644,7 @@ main(int argc, char **argv)
     assert(!ringbuf_is_full(rb1));
     assert(ringbuf_is_empty(rb1));
     assert(ringbuf_tail(rb1) == ringbuf_head(rb1));
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1) + RINGBUF_DEFAULT_SIZE - 1);
+    assert(ringbuf_head(rb1) == rb1_base + RINGBUF_DEFAULT_SIZE - 1);
     assert(strncmp(dst, buf2, RINGBUF_DEFAULT_SIZE - 1) == 0);
     assert(strncmp(dst + RINGBUF_DEFAULT_SIZE - 1, buf + RINGBUF_DEFAULT_SIZE - 1, RINGBUF_DEFAULT_SIZE + 1) == 0);
     END_TEST(test_num);
@@ -685,7 +664,7 @@ main(int argc, char **argv)
     assert(!ringbuf_is_full(rb1));
     assert(ringbuf_is_empty(rb1));
     assert(ringbuf_tail(rb1) == ringbuf_head(rb1));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + 13);
+    assert(ringbuf_tail(rb1) == rb1_base + 13);
     assert(strncmp(dst, buf2, 13) == 0);
     assert(strncmp(dst + 13, buf + 13, RINGBUF_DEFAULT_SIZE * 2 - 13) == 0);
     END_TEST(test_num);
@@ -705,7 +684,7 @@ main(int argc, char **argv)
     assert(!ringbuf_is_full(rb1));
     assert(ringbuf_is_empty(rb1));
     assert(ringbuf_tail(rb1) == ringbuf_head(rb1));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + RINGBUF_DEFAULT_SIZE - 1);
+    assert(ringbuf_tail(rb1) == rb1_base + RINGBUF_DEFAULT_SIZE - 1);
     assert(strncmp(dst, buf2, RINGBUF_DEFAULT_SIZE - 1) == 0);
     assert(strncmp(dst + RINGBUF_DEFAULT_SIZE - 1, buf + RINGBUF_DEFAULT_SIZE - 1, RINGBUF_DEFAULT_SIZE * 2 - (RINGBUF_DEFAULT_SIZE -1)) == 0);
     END_TEST(test_num);
@@ -723,8 +702,8 @@ main(int argc, char **argv)
     assert(ringbuf_bytes_used(rb1) == 15);
     assert(!ringbuf_is_full(rb1));
     assert(!ringbuf_is_empty(rb1));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1));
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1) + 15);
+    assert(ringbuf_tail(rb1) == rb1_base);
+    assert(ringbuf_head(rb1) == rb1_base + 15);
     assert(strncmp(dst, buf, RINGBUF_DEFAULT_SIZE * 2) == 0);
     END_TEST(test_num);
     
@@ -742,8 +721,8 @@ main(int argc, char **argv)
     assert(ringbuf_bytes_used(rb1) == 1);
     assert(!ringbuf_is_full(rb1));
     assert(!ringbuf_is_empty(rb1));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + 14);
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1) + 15);
+    assert(ringbuf_tail(rb1) == rb1_base + 14);
+    assert(ringbuf_head(rb1) == rb1_base + 15);
     assert(strncmp(dst, buf2, 14) == 0);
     assert(strncmp(dst + 14, buf + 14, RINGBUF_DEFAULT_SIZE * 2 - 14) == 0);
     END_TEST(test_num);
@@ -784,7 +763,7 @@ main(int argc, char **argv)
     assert(ringbuf_bytes_used(rb1) == strlen(test_pattern2));
     assert(!ringbuf_is_full(rb1));
     assert(!ringbuf_is_empty(rb1));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1));
+    assert(ringbuf_tail(rb1) == rb1_base);
     assert(lseek(wrfd, 0, SEEK_SET) == 0);
     /* should return 0 (EOF) */
     assert(read(wrfd, dst, 10) == 0);
@@ -805,7 +784,7 @@ main(int argc, char **argv)
     assert(ringbuf_bytes_used(rb1) == strlen(test_pattern2) - 3);
     assert(!ringbuf_is_full(rb1));
     assert(!ringbuf_is_empty(rb1));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + 3);
+    assert(ringbuf_tail(rb1) == rb1_base + 3);
     assert(ringbuf_head(rb1) == ringbuf_tail(rb1) + (strlen(test_pattern2) - 3));
     assert(lseek(wrfd, 0, SEEK_SET) == 0);
     assert(read(wrfd, dst, 4) == 3);
@@ -830,7 +809,7 @@ main(int argc, char **argv)
     assert(!ringbuf_is_full(rb1));
     assert(ringbuf_is_empty(rb1));
     assert(ringbuf_tail(rb1) == ringbuf_head(rb1));
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1) + RINGBUF_DEFAULT_SIZE - 1);
+    assert(ringbuf_head(rb1) == rb1_base + RINGBUF_DEFAULT_SIZE - 1);
     assert(lseek(wrfd, 0, SEEK_SET) == 0);
     assert(read(wrfd, dst, RINGBUF_DEFAULT_SIZE) == RINGBUF_DEFAULT_SIZE - 1);
     assert(read(wrfd, dst + RINGBUF_DEFAULT_SIZE - 1, 1) == 0);
@@ -855,7 +834,7 @@ main(int argc, char **argv)
     assert(!ringbuf_is_full(rb1));
     assert(ringbuf_is_empty(rb1));
     assert(ringbuf_tail(rb1) == ringbuf_head(rb1));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + 13);
+    assert(ringbuf_tail(rb1) == rb1_base + 13);
     assert(lseek(wrfd, 0, SEEK_SET) == 0);
     assert(read(wrfd, dst, 14) == 13);
     assert(read(wrfd, dst + 13, 1) == 0);
@@ -880,7 +859,7 @@ main(int argc, char **argv)
     assert(!ringbuf_is_full(rb1));
     assert(ringbuf_is_empty(rb1));
     assert(ringbuf_tail(rb1) == ringbuf_head(rb1));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + RINGBUF_DEFAULT_SIZE - 1);
+    assert(ringbuf_tail(rb1) == rb1_base + RINGBUF_DEFAULT_SIZE - 1);
     assert(lseek(wrfd, 0, SEEK_SET) == 0);
     assert(read(wrfd, dst, RINGBUF_DEFAULT_SIZE - 1) == RINGBUF_DEFAULT_SIZE - 1);
     assert(read(wrfd, dst + RINGBUF_DEFAULT_SIZE - 1, 1) == 0);
@@ -903,8 +882,8 @@ main(int argc, char **argv)
     assert(ringbuf_bytes_used(rb1) == 15);
     assert(!ringbuf_is_full(rb1));
     assert(!ringbuf_is_empty(rb1));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1));
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1) + 15);
+    assert(ringbuf_tail(rb1) == rb1_base);
+    assert(ringbuf_head(rb1) == rb1_base + 15);
     assert(lseek(wrfd, 0, SEEK_SET) == 0);
     assert(read(wrfd, dst, 1) == 0);
     assert(strncmp(dst, buf, RINGBUF_DEFAULT_SIZE * 2) == 0);
@@ -926,8 +905,8 @@ main(int argc, char **argv)
     assert(ringbuf_bytes_used(rb1) == 1);
     assert(!ringbuf_is_full(rb1));
     assert(!ringbuf_is_empty(rb1));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + 14);
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1) + 15);
+    assert(ringbuf_tail(rb1) == rb1_base + 14);
+    assert(ringbuf_head(rb1) == rb1_base + 15);
     assert(lseek(wrfd, 0, SEEK_SET) == 0);
     assert(read(wrfd, dst, 15) == 14);
     assert(read(wrfd, dst, 1) == 0);
@@ -981,8 +960,8 @@ main(int argc, char **argv)
     assert(read(wrfd, dst, 1) == 0);
     assert(strncmp(dst, buf, 7) == 0);
     assert(strncmp(dst + 7, buf2 + 7, RINGBUF_DEFAULT_SIZE * 2 - 7) == 0);
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + 7);
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1) + 11);
+    assert(ringbuf_tail(rb1) == rb1_base + 7);
+    assert(ringbuf_head(rb1) == rb1_base + 11);
     assert(*(char *)ringbuf_head(rb1) == '\1');
     END_TEST(test_num);
 
@@ -1006,8 +985,8 @@ main(int argc, char **argv)
     assert(ringbuf_bytes_used(rb1) == RINGBUF_DEFAULT_SIZE - 11 - 1);
     assert(!ringbuf_is_full(rb1));
     assert(!ringbuf_is_empty(rb1));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + 11);
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1) + RINGBUF_DEFAULT_SIZE - 1);
+    assert(ringbuf_tail(rb1) == rb1_base + 11);
+    assert(ringbuf_head(rb1) == rb1_base + RINGBUF_DEFAULT_SIZE - 1);
     assert(lseek(wrfd, 0, SEEK_SET) == 0);
     assert(read(wrfd, dst, 11) == 11);
     assert(read(wrfd, dst, 1) == 0);
@@ -1036,8 +1015,8 @@ main(int argc, char **argv)
     assert(ringbuf_bytes_used(rb1) == RINGBUF_DEFAULT_SIZE - 11);
     assert(!ringbuf_is_full(rb1));
     assert(!ringbuf_is_empty(rb1));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + 11);
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1));
+    assert(ringbuf_tail(rb1) == rb1_base + 11);
+    assert(ringbuf_head(rb1) == rb1_base);
     assert(lseek(wrfd, 0, SEEK_SET) == 0);
     assert(read(wrfd, dst, 11) == 11);
     assert(read(wrfd, dst, 1) == 0);
@@ -1074,8 +1053,8 @@ main(int argc, char **argv)
     assert(ringbuf_bytes_used(rb1) == 1);
     assert(!ringbuf_is_full(rb1));
     assert(!ringbuf_is_empty(rb1));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + RINGBUF_DEFAULT_SIZE - 1);
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1));
+    assert(ringbuf_tail(rb1) == rb1_base + RINGBUF_DEFAULT_SIZE - 1);
+    assert(ringbuf_head(rb1) == rb1_base);
     assert(lseek(wrfd, 0, SEEK_SET) == 0);
     assert(read(wrfd, dst, RINGBUF_DEFAULT_SIZE - 1) == RINGBUF_DEFAULT_SIZE - 1);
     assert(read(wrfd, dst, 1) == 0);
@@ -1106,8 +1085,8 @@ main(int argc, char **argv)
     assert(ringbuf_bytes_used(rb1) == 2);
     assert(!ringbuf_is_full(rb1));
     assert(!ringbuf_is_empty(rb1));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + RINGBUF_DEFAULT_SIZE - 1);
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1) + 1);
+    assert(ringbuf_tail(rb1) == rb1_base + RINGBUF_DEFAULT_SIZE - 1);
+    assert(ringbuf_head(rb1) == rb1_base + 1);
     assert(lseek(wrfd, 0, SEEK_SET) == 0);
     assert(read(wrfd, dst, RINGBUF_DEFAULT_SIZE - 1) == RINGBUF_DEFAULT_SIZE - 1);
     assert(read(wrfd, dst, 1) == 0);
@@ -1138,8 +1117,8 @@ main(int argc, char **argv)
     assert(ringbuf_bytes_used(rb1) == 1);
     assert(!ringbuf_is_full(rb1));
     assert(!ringbuf_is_empty(rb1));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1));
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1) + 1);
+    assert(ringbuf_tail(rb1) == rb1_base);
+    assert(ringbuf_head(rb1) == rb1_base + 1);
     assert(lseek(wrfd, 0, SEEK_SET) == 0);
     assert(read(wrfd, dst, RINGBUF_DEFAULT_SIZE) == RINGBUF_DEFAULT_SIZE);
     assert(read(wrfd, dst, 1) == 0);
@@ -1171,8 +1150,8 @@ main(int argc, char **argv)
     assert(ringbuf_bytes_used(rb1) == 1);
     assert(!ringbuf_is_full(rb1));
     assert(!ringbuf_is_empty(rb1));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1));
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1) + 1);
+    assert(ringbuf_tail(rb1) == rb1_base);
+    assert(ringbuf_head(rb1) == rb1_base + 1);
     assert(lseek(wrfd, 0, SEEK_SET) == 0);
     assert(read(wrfd, dst, RINGBUF_DEFAULT_SIZE) == RINGBUF_DEFAULT_SIZE);
     assert(read(wrfd, dst, 1) == 0);
@@ -1205,8 +1184,8 @@ main(int argc, char **argv)
     assert(ringbuf_bytes_used(rb1) == 0);
     assert(!ringbuf_is_full(rb1));
     assert(ringbuf_is_empty(rb1));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + 1);
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1) + 1);
+    assert(ringbuf_tail(rb1) == rb1_base + 1);
+    assert(ringbuf_head(rb1) == rb1_base + 1);
     assert(lseek(wrfd, 0, SEEK_SET) == 0);
     assert(read(wrfd, dst, RINGBUF_DEFAULT_SIZE + 1) == RINGBUF_DEFAULT_SIZE + 1);
     assert(read(wrfd, dst, 1) == 0);
@@ -1247,8 +1226,8 @@ main(int argc, char **argv)
     assert(!ringbuf_is_empty(rb1));
     assert(strncmp(dst, buf, 7) == 0);
     assert(strncmp(dst + 7, buf2 + 7, RINGBUF_DEFAULT_SIZE * 2 - 7) == 0);
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + 7);
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1) + 11);
+    assert(ringbuf_tail(rb1) == rb1_base + 7);
+    assert(ringbuf_head(rb1) == rb1_base + 11);
     assert(*(char *)ringbuf_head(rb1) == '\1');
     END_TEST(test_num);
 
@@ -1270,8 +1249,8 @@ main(int argc, char **argv)
     assert(ringbuf_bytes_used(rb1) == RINGBUF_DEFAULT_SIZE - 11 - 1);
     assert(!ringbuf_is_full(rb1));
     assert(!ringbuf_is_empty(rb1));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + 11);
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1) + RINGBUF_DEFAULT_SIZE - 1);
+    assert(ringbuf_tail(rb1) == rb1_base + 11);
+    assert(ringbuf_head(rb1) == rb1_base + RINGBUF_DEFAULT_SIZE - 1);
     assert(strncmp(dst, buf, 11) == 0);
     assert(strncmp(dst + 11, buf2 + 11, RINGBUF_DEFAULT_SIZE * 2 - 11) == 0);
     END_TEST(test_num);
@@ -1294,8 +1273,8 @@ main(int argc, char **argv)
     assert(ringbuf_bytes_used(rb1) == RINGBUF_DEFAULT_SIZE - 11);
     assert(!ringbuf_is_full(rb1));
     assert(!ringbuf_is_empty(rb1));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + 11);
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1));
+    assert(ringbuf_tail(rb1) == rb1_base + 11);
+    assert(ringbuf_head(rb1) == rb1_base);
     assert(strncmp(dst, buf, 11) == 0);
     assert(strncmp(dst + 11, buf2 + 11, RINGBUF_DEFAULT_SIZE * 2 - 11) == 0);
     END_TEST(test_num);
@@ -1323,8 +1302,8 @@ main(int argc, char **argv)
     assert(ringbuf_bytes_used(rb1) == 2);
     assert(!ringbuf_is_full(rb1));
     assert(!ringbuf_is_empty(rb1));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + RINGBUF_DEFAULT_SIZE - 1);
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1) + 1);
+    assert(ringbuf_tail(rb1) == rb1_base + RINGBUF_DEFAULT_SIZE - 1);
+    assert(ringbuf_head(rb1) == rb1_base + 1);
     assert(strncmp(dst, buf, RINGBUF_DEFAULT_SIZE - 1) == 0);
     assert(strncmp(dst + RINGBUF_DEFAULT_SIZE - 1, buf2 + RINGBUF_DEFAULT_SIZE - 1, RINGBUF_DEFAULT_SIZE * 2 - (RINGBUF_DEFAULT_SIZE - 1)) == 0);
     END_TEST(test_num);
@@ -1347,8 +1326,8 @@ main(int argc, char **argv)
     assert(ringbuf_bytes_used(rb1) == 1);
     assert(!ringbuf_is_full(rb1));
     assert(!ringbuf_is_empty(rb1));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1));
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1) + 1);
+    assert(ringbuf_tail(rb1) == rb1_base);
+    assert(ringbuf_head(rb1) == rb1_base + 1);
     assert(strncmp(dst, buf, RINGBUF_DEFAULT_SIZE) == 0);
     assert(strncmp(dst + RINGBUF_DEFAULT_SIZE, buf2 + RINGBUF_DEFAULT_SIZE, RINGBUF_DEFAULT_SIZE) == 0);
     END_TEST(test_num);
@@ -1372,8 +1351,8 @@ main(int argc, char **argv)
     assert(ringbuf_bytes_used(rb1) == 0);
     assert(!ringbuf_is_full(rb1));
     assert(ringbuf_is_empty(rb1));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + 1);
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1) + 1);
+    assert(ringbuf_tail(rb1) == rb1_base + 1);
+    assert(ringbuf_head(rb1) == rb1_base + 1);
     assert(strncmp(dst, buf, RINGBUF_DEFAULT_SIZE + 1) == 0);
     assert(strncmp(dst + RINGBUF_DEFAULT_SIZE + 1, buf2 + RINGBUF_DEFAULT_SIZE + 1, RINGBUF_DEFAULT_SIZE - 1) == 0);
     END_TEST(test_num);
@@ -1400,8 +1379,8 @@ main(int argc, char **argv)
     assert(ringbuf_bytes_used(rb1) == RINGBUF_DEFAULT_SIZE - 1);
     assert(ringbuf_is_full(rb1));
     assert(!ringbuf_is_empty(rb1));
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1) + 11);
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + 12);
+    assert(ringbuf_head(rb1) == rb1_base + 11);
+    assert(ringbuf_tail(rb1) == rb1_base + 12);
     END_TEST(test_num);
 
     /*
@@ -1423,7 +1402,7 @@ main(int argc, char **argv)
     assert(ringbuf_read(rdfd, rb1, RINGBUF_DEFAULT_SIZE - 11) == RINGBUF_DEFAULT_SIZE - 11);
     /* write until tail points to end of contiguous buffer */
     assert(ringbuf_write(wrfd, rb1, RINGBUF_DEFAULT_SIZE - 12) == RINGBUF_DEFAULT_SIZE - 12);
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + RINGBUF_DEFAULT_SIZE - 1);
+    assert(ringbuf_tail(rb1) == rb1_base + RINGBUF_DEFAULT_SIZE - 1);
     /* overflow */
     assert(ringbuf_read(rdfd, rb1, RINGBUF_DEFAULT_SIZE - 1) == RINGBUF_DEFAULT_SIZE - 1);
     assert(ringbuf_capacity(rb1) == RINGBUF_DEFAULT_SIZE - 1);
@@ -1431,8 +1410,8 @@ main(int argc, char **argv)
     assert(ringbuf_bytes_used(rb1) == RINGBUF_DEFAULT_SIZE - 1);
     assert(ringbuf_is_full(rb1));
     assert(!ringbuf_is_empty(rb1));
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1) + RINGBUF_DEFAULT_SIZE - 1);
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1));
+    assert(ringbuf_head(rb1) == rb1_base + RINGBUF_DEFAULT_SIZE - 1);
+    assert(ringbuf_tail(rb1) == rb1_base);
     END_TEST(test_num);
 
     /*
@@ -1455,8 +1434,8 @@ main(int argc, char **argv)
     assert(ringbuf_bytes_used(rb1) == RINGBUF_DEFAULT_SIZE - 1);
     assert(ringbuf_is_full(rb1));
     assert(!ringbuf_is_empty(rb1));
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1) + 11);
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + 12);
+    assert(ringbuf_head(rb1) == rb1_base + 11);
+    assert(ringbuf_tail(rb1) == rb1_base + 12);
     END_TEST(test_num);
 
     /*
@@ -1476,7 +1455,7 @@ main(int argc, char **argv)
     assert(ringbuf_memcpy_into(rb1, buf + 11, RINGBUF_DEFAULT_SIZE - 11) == ringbuf_head(rb1));
     /* copy from until tail points to end of contiguous buffer */
     assert(ringbuf_memcpy_from(dst + 11, rb1, RINGBUF_DEFAULT_SIZE - 12) == ringbuf_tail(rb1));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + RINGBUF_DEFAULT_SIZE - 1);
+    assert(ringbuf_tail(rb1) == rb1_base + RINGBUF_DEFAULT_SIZE - 1);
     /* overflow */
     assert(ringbuf_memcpy_into(rb1, buf + RINGBUF_DEFAULT_SIZE, RINGBUF_DEFAULT_SIZE - 1) == ringbuf_head(rb1));
     assert(ringbuf_capacity(rb1) == RINGBUF_DEFAULT_SIZE - 1);
@@ -1484,12 +1463,13 @@ main(int argc, char **argv)
     assert(ringbuf_bytes_used(rb1) == RINGBUF_DEFAULT_SIZE - 1);
     assert(ringbuf_is_full(rb1));
     assert(!ringbuf_is_empty(rb1));
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1) + RINGBUF_DEFAULT_SIZE - 1);
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1));
+    assert(ringbuf_head(rb1) == rb1_base + RINGBUF_DEFAULT_SIZE - 1);
+    assert(ringbuf_tail(rb1) == rb1_base);
     END_TEST(test_num);
 
     ringbuf_t rb2 = ringbuf_new();
-
+    const void *rb2_base = ringbuf_head(rb2);
+    
     /* ringbuf_copy with zero count, empty buffers */
     START_NEW_TEST(test_num);
     ringbuf_reset(rb1);
@@ -1511,8 +1491,8 @@ main(int argc, char **argv)
     assert(ringbuf_is_empty(rb2));
     assert(ringbuf_tail(rb1) == ringbuf_head(rb1));
     assert(ringbuf_tail(rb2) == ringbuf_head(rb2));
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1));
-    assert(ringbuf_head(rb2) == ringbuf_base(rb2));
+    assert(ringbuf_head(rb1) == rb1_base);
+    assert(ringbuf_head(rb2) == rb2_base);
     END_TEST(test_num);
 
     /* ringbuf_copy with zero count, empty src */
@@ -1535,10 +1515,10 @@ main(int argc, char **argv)
     assert(!ringbuf_is_full(rb2));
     assert(!ringbuf_is_empty(rb1));
     assert(ringbuf_is_empty(rb2));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1));
+    assert(ringbuf_tail(rb1) == rb1_base);
     assert(ringbuf_tail(rb2) == ringbuf_head(rb2));
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1) + 2);
-    assert(ringbuf_head(rb2) == ringbuf_base(rb2));
+    assert(ringbuf_head(rb1) == rb1_base + 2);
+    assert(ringbuf_head(rb2) == rb2_base);
     END_TEST(test_num);
 
     /* ringbuf_copy with zero count, empty dst */
@@ -1562,9 +1542,9 @@ main(int argc, char **argv)
     assert(ringbuf_is_empty(rb1));
     assert(!ringbuf_is_empty(rb2));
     assert(ringbuf_tail(rb1) == ringbuf_head(rb1));
-    assert(ringbuf_tail(rb2) == ringbuf_base(rb2));
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1));
-    assert(ringbuf_head(rb2) == ringbuf_base(rb2) + 2);
+    assert(ringbuf_tail(rb2) == rb2_base);
+    assert(ringbuf_head(rb1) == rb1_base);
+    assert(ringbuf_head(rb2) == rb2_base + 2);
     END_TEST(test_num);
 
     /* ringbuf_copy with zero count */
@@ -1588,10 +1568,10 @@ main(int argc, char **argv)
     assert(!ringbuf_is_full(rb2));
     assert(!ringbuf_is_empty(rb1));
     assert(!ringbuf_is_empty(rb2));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1));
-    assert(ringbuf_tail(rb2) == ringbuf_base(rb2));
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1) + 2);
-    assert(ringbuf_head(rb2) == ringbuf_base(rb2) + 2);
+    assert(ringbuf_tail(rb1) == rb1_base);
+    assert(ringbuf_tail(rb2) == rb2_base);
+    assert(ringbuf_head(rb1) == rb1_base + 2);
+    assert(ringbuf_head(rb2) == rb2_base + 2);
     END_TEST(test_num);
 
     /* ringbuf_copy full contents of rb2 into rb1 (initially empty) */
@@ -1614,10 +1594,10 @@ main(int argc, char **argv)
     assert(!ringbuf_is_full(rb2));
     assert(!ringbuf_is_empty(rb1));
     assert(ringbuf_is_empty(rb2));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1));
-    assert(ringbuf_tail(rb2) == ringbuf_base(rb2) + 2);
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1) + 2);
-    assert(ringbuf_head(rb2) == ringbuf_base(rb2) + 2);
+    assert(ringbuf_tail(rb1) == rb1_base);
+    assert(ringbuf_tail(rb2) == rb2_base + 2);
+    assert(ringbuf_head(rb1) == rb1_base + 2);
+    assert(ringbuf_head(rb2) == rb2_base + 2);
     assert(strncmp(ringbuf_tail(rb1), buf2, 2) == 0);
     END_TEST(test_num);
 
@@ -1643,10 +1623,10 @@ main(int argc, char **argv)
     assert(!ringbuf_is_full(rb2));
     assert(!ringbuf_is_empty(rb1));
     assert(ringbuf_is_empty(rb2));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1));
-    assert(ringbuf_tail(rb2) == ringbuf_base(rb2) + 2);
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1) + 5);
-    assert(ringbuf_head(rb2) == ringbuf_base(rb2) + 2);
+    assert(ringbuf_tail(rb1) == rb1_base);
+    assert(ringbuf_tail(rb2) == rb2_base + 2);
+    assert(ringbuf_head(rb1) == rb1_base + 5);
+    assert(ringbuf_head(rb2) == rb2_base + 2);
     assert(strncmp(ringbuf_tail(rb1), buf, 3) == 0);
     assert(strncmp(ringbuf_tail(rb1) + 3, buf2, 2) == 0);
     END_TEST(test_num);
@@ -1660,7 +1640,7 @@ main(int argc, char **argv)
     ringbuf_memset(rb2, 2, ringbuf_buffer_size(rb2));
     ringbuf_reset(rb2);
     assert(ringbuf_memcpy_into(rb1, buf, RINGBUF_DEFAULT_SIZE - 1) == ringbuf_head(rb1));
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1) + RINGBUF_DEFAULT_SIZE - 1);
+    assert(ringbuf_head(rb1) == rb1_base + RINGBUF_DEFAULT_SIZE - 1);
     /* make sure rb1 doesn't overflow on later ringbuf_copy */
     assert(ringbuf_memcpy_from(dst, rb1, 1) == ringbuf_tail(rb1));
     assert(ringbuf_memcpy_into(rb2, buf2, 1) == ringbuf_head(rb2));
@@ -1675,10 +1655,10 @@ main(int argc, char **argv)
     assert(!ringbuf_is_full(rb2));
     assert(!ringbuf_is_empty(rb1));
     assert(ringbuf_is_empty(rb2));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + 1);
-    assert(ringbuf_tail(rb2) == ringbuf_base(rb2) + 1);
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1));
-    assert(ringbuf_head(rb2) == ringbuf_base(rb2) + 1);
+    assert(ringbuf_tail(rb1) == rb1_base + 1);
+    assert(ringbuf_tail(rb2) == rb2_base + 1);
+    assert(ringbuf_head(rb1) == rb1_base);
+    assert(ringbuf_head(rb2) == rb2_base + 1);
     assert(strncmp(ringbuf_tail(rb1), buf + 1, RINGBUF_DEFAULT_SIZE - 2) == 0);
     assert(strncmp(ringbuf_tail(rb1) + RINGBUF_DEFAULT_SIZE - 2, buf2, 1) == 0);
     END_TEST(test_num);
@@ -1693,7 +1673,7 @@ main(int argc, char **argv)
     ringbuf_memset(rb2, 2, ringbuf_buffer_size(rb2));
     ringbuf_reset(rb2);
     assert(ringbuf_memcpy_into(rb1, buf, RINGBUF_DEFAULT_SIZE - 1) == ringbuf_head(rb1));
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1) + RINGBUF_DEFAULT_SIZE - 1);
+    assert(ringbuf_head(rb1) == rb1_base + RINGBUF_DEFAULT_SIZE - 1);
     /* make sure rb1 doesn't overflow on later ringbuf_copy */
     assert(ringbuf_memcpy_from(dst, rb1, 2) == ringbuf_tail(rb1));
     assert(ringbuf_memcpy_into(rb2, buf2, 2) == ringbuf_head(rb2));
@@ -1708,15 +1688,15 @@ main(int argc, char **argv)
     assert(!ringbuf_is_full(rb2));
     assert(!ringbuf_is_empty(rb1));
     assert(ringbuf_is_empty(rb2));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + 2);
-    assert(ringbuf_tail(rb2) == ringbuf_base(rb2) + 2);
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1) + 1);
-    assert(ringbuf_head(rb2) == ringbuf_base(rb2) + 2);
+    assert(ringbuf_tail(rb1) == rb1_base + 2);
+    assert(ringbuf_tail(rb2) == rb2_base + 2);
+    assert(ringbuf_head(rb1) == rb1_base + 1);
+    assert(ringbuf_head(rb2) == rb2_base + 2);
     assert(strncmp(ringbuf_tail(rb1), buf + 2, RINGBUF_DEFAULT_SIZE - 3) == 0);
     /* last position in contiguous buffer */
     assert(strncmp(ringbuf_tail(rb1) + RINGBUF_DEFAULT_SIZE - 3, buf2, 1) == 0);
     /* start of contiguous buffer (from copy wrap) */
-    assert(strncmp(ringbuf_base(rb1), buf2 + 1, 1) == 0);
+    assert(strncmp(rb1_base, buf2 + 1, 1) == 0);
     END_TEST(test_num);
 
     /* ringbuf_copy, wrap tail of src */
@@ -1728,9 +1708,9 @@ main(int argc, char **argv)
     ringbuf_memset(rb2, 2, ringbuf_buffer_size(rb2));
     ringbuf_reset(rb2);
     assert(ringbuf_memcpy_into(rb2, buf2, RINGBUF_DEFAULT_SIZE - 1) == ringbuf_head(rb2));
-    assert(ringbuf_head(rb2) == ringbuf_base(rb2) + RINGBUF_DEFAULT_SIZE - 1);
+    assert(ringbuf_head(rb2) == rb2_base + RINGBUF_DEFAULT_SIZE - 1);
     assert(ringbuf_memcpy_from(dst, rb2, RINGBUF_DEFAULT_SIZE - 3) == ringbuf_tail(rb2));
-    assert(ringbuf_tail(rb2) == ringbuf_base(rb2) + RINGBUF_DEFAULT_SIZE - 3);
+    assert(ringbuf_tail(rb2) == rb2_base + RINGBUF_DEFAULT_SIZE - 3);
     assert(ringbuf_memcpy_into(rb2, buf2 + RINGBUF_DEFAULT_SIZE - 1, 2) == ringbuf_head(rb2));
     assert(ringbuf_copy(rb1, rb2, 3) == ringbuf_head(rb1));
     assert(ringbuf_capacity(rb1) == RINGBUF_DEFAULT_SIZE - 1);
@@ -1743,10 +1723,10 @@ main(int argc, char **argv)
     assert(!ringbuf_is_full(rb2));
     assert(!ringbuf_is_empty(rb1));
     assert(!ringbuf_is_empty(rb2));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1));
-    assert(ringbuf_tail(rb2) == ringbuf_base(rb2));
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1) + 3);
-    assert(ringbuf_head(rb2) == ringbuf_base(rb2) + 1);
+    assert(ringbuf_tail(rb1) == rb1_base);
+    assert(ringbuf_tail(rb2) == rb2_base);
+    assert(ringbuf_head(rb1) == rb1_base + 3);
+    assert(ringbuf_head(rb2) == rb2_base + 1);
     assert(strncmp(ringbuf_tail(rb1), buf2 + RINGBUF_DEFAULT_SIZE - 3, 3) == 0);
     assert(*(char *)ringbuf_head(rb1) == '\1');
     END_TEST(test_num);
@@ -1761,9 +1741,9 @@ main(int argc, char **argv)
     ringbuf_memset(rb2, 2, ringbuf_buffer_size(rb2));
     ringbuf_reset(rb2);
     assert(ringbuf_memcpy_into(rb2, buf2, RINGBUF_DEFAULT_SIZE - 1) == ringbuf_head(rb2));
-    assert(ringbuf_head(rb2) == ringbuf_base(rb2) + RINGBUF_DEFAULT_SIZE - 1);
+    assert(ringbuf_head(rb2) == rb2_base + RINGBUF_DEFAULT_SIZE - 1);
     assert(ringbuf_memcpy_from(dst, rb2, RINGBUF_DEFAULT_SIZE - 3) == ringbuf_tail(rb2));
-    assert(ringbuf_tail(rb2) == ringbuf_base(rb2) + RINGBUF_DEFAULT_SIZE - 3);
+    assert(ringbuf_tail(rb2) == rb2_base + RINGBUF_DEFAULT_SIZE - 3);
     assert(ringbuf_memcpy_into(rb2, buf2 + RINGBUF_DEFAULT_SIZE - 1, 2) == ringbuf_head(rb2));
     assert(ringbuf_copy(rb1, rb2, 4) == ringbuf_head(rb1));
     assert(ringbuf_capacity(rb1) == RINGBUF_DEFAULT_SIZE - 1);
@@ -1776,10 +1756,10 @@ main(int argc, char **argv)
     assert(!ringbuf_is_full(rb2));
     assert(!ringbuf_is_empty(rb1));
     assert(ringbuf_is_empty(rb2));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1));
-    assert(ringbuf_tail(rb2) == ringbuf_base(rb2) + 1);
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1) + 4);
-    assert(ringbuf_head(rb2) == ringbuf_base(rb2) + 1);
+    assert(ringbuf_tail(rb1) == rb1_base);
+    assert(ringbuf_tail(rb2) == rb2_base + 1);
+    assert(ringbuf_head(rb1) == rb1_base + 4);
+    assert(ringbuf_head(rb2) == rb2_base + 1);
     assert(strncmp(ringbuf_tail(rb1), buf2 + RINGBUF_DEFAULT_SIZE - 3, 4) == 0);
     assert(*(char *)ringbuf_head(rb1) == '\1');
     END_TEST(test_num);
@@ -1794,14 +1774,14 @@ main(int argc, char **argv)
     ringbuf_memset(rb2, 2, ringbuf_buffer_size(rb2));
     ringbuf_reset(rb2);
     assert(ringbuf_memcpy_into(rb2, buf2, RINGBUF_DEFAULT_SIZE - 1) == ringbuf_head(rb2));
-    assert(ringbuf_head(rb2) == ringbuf_base(rb2) + RINGBUF_DEFAULT_SIZE - 1);
+    assert(ringbuf_head(rb2) == rb2_base + RINGBUF_DEFAULT_SIZE - 1);
     assert(ringbuf_memcpy_from(dst, rb2, RINGBUF_DEFAULT_SIZE - 3) == ringbuf_tail(rb2));
-    assert(ringbuf_tail(rb2) == ringbuf_base(rb2) + RINGBUF_DEFAULT_SIZE - 3);
+    assert(ringbuf_tail(rb2) == rb2_base + RINGBUF_DEFAULT_SIZE - 3);
     assert(ringbuf_memcpy_into(rb2, buf2 + RINGBUF_DEFAULT_SIZE - 1, 2) == ringbuf_head(rb2));
     assert(ringbuf_memcpy_into(rb1, buf, RINGBUF_DEFAULT_SIZE - 3) == ringbuf_head(rb1));
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1) + RINGBUF_DEFAULT_SIZE - 3);
+    assert(ringbuf_head(rb1) == rb1_base + RINGBUF_DEFAULT_SIZE - 3);
     assert(ringbuf_memcpy_from(dst, rb1, RINGBUF_DEFAULT_SIZE - 3) == ringbuf_tail(rb1));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + RINGBUF_DEFAULT_SIZE - 3);
+    assert(ringbuf_tail(rb1) == rb1_base + RINGBUF_DEFAULT_SIZE - 3);
     assert(ringbuf_copy(rb1, rb2, 4) == ringbuf_head(rb1));
     assert(ringbuf_capacity(rb1) == RINGBUF_DEFAULT_SIZE - 1);
     assert(ringbuf_capacity(rb2) == RINGBUF_DEFAULT_SIZE - 1);
@@ -1813,12 +1793,12 @@ main(int argc, char **argv)
     assert(!ringbuf_is_full(rb2));
     assert(!ringbuf_is_empty(rb1));
     assert(ringbuf_is_empty(rb2));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + RINGBUF_DEFAULT_SIZE - 3);
-    assert(ringbuf_tail(rb2) == ringbuf_base(rb2) + 1);
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1) + 1);
-    assert(ringbuf_head(rb2) == ringbuf_base(rb2) + 1);
+    assert(ringbuf_tail(rb1) == rb1_base + RINGBUF_DEFAULT_SIZE - 3);
+    assert(ringbuf_tail(rb2) == rb2_base + 1);
+    assert(ringbuf_head(rb1) == rb1_base + 1);
+    assert(ringbuf_head(rb2) == rb2_base + 1);
     assert(strncmp(ringbuf_tail(rb1), buf2 + RINGBUF_DEFAULT_SIZE - 3, 3) == 0);
-    assert(strncmp(ringbuf_base(rb1), buf2 + RINGBUF_DEFAULT_SIZE, 1) == 0);
+    assert(strncmp(rb1_base, buf2 + RINGBUF_DEFAULT_SIZE, 1) == 0);
     END_TEST(test_num);
 
     /* ringbuf_copy, force 3 separate memcpy's: up to end of src, then
@@ -1831,14 +1811,14 @@ main(int argc, char **argv)
     ringbuf_memset(rb2, 2, ringbuf_buffer_size(rb2));
     ringbuf_reset(rb2);
     assert(ringbuf_memcpy_into(rb2, buf2, RINGBUF_DEFAULT_SIZE - 1) == ringbuf_head(rb2));
-    assert(ringbuf_head(rb2) == ringbuf_base(rb2) + RINGBUF_DEFAULT_SIZE - 1);
+    assert(ringbuf_head(rb2) == rb2_base + RINGBUF_DEFAULT_SIZE - 1);
     assert(ringbuf_memcpy_from(dst, rb2, RINGBUF_DEFAULT_SIZE - 2) == ringbuf_tail(rb2));
-    assert(ringbuf_tail(rb2) == ringbuf_base(rb2) + RINGBUF_DEFAULT_SIZE - 2);
+    assert(ringbuf_tail(rb2) == rb2_base + RINGBUF_DEFAULT_SIZE - 2);
     assert(ringbuf_memcpy_into(rb2, buf2 + RINGBUF_DEFAULT_SIZE - 1, 5) == ringbuf_head(rb2));
     assert(ringbuf_memcpy_into(rb1, buf, RINGBUF_DEFAULT_SIZE - 3) == ringbuf_head(rb1));
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1) + RINGBUF_DEFAULT_SIZE - 3);
+    assert(ringbuf_head(rb1) == rb1_base + RINGBUF_DEFAULT_SIZE - 3);
     assert(ringbuf_memcpy_from(dst, rb1, RINGBUF_DEFAULT_SIZE - 4) == ringbuf_tail(rb1));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + RINGBUF_DEFAULT_SIZE - 4);
+    assert(ringbuf_tail(rb1) == rb1_base + RINGBUF_DEFAULT_SIZE - 4);
     assert(ringbuf_copy(rb1, rb2, 5) == ringbuf_head(rb1));
     assert(ringbuf_capacity(rb1) == RINGBUF_DEFAULT_SIZE - 1);
     assert(ringbuf_capacity(rb2) == RINGBUF_DEFAULT_SIZE - 1);
@@ -1850,15 +1830,15 @@ main(int argc, char **argv)
     assert(!ringbuf_is_full(rb2));
     assert(!ringbuf_is_empty(rb1));
     assert(!ringbuf_is_empty(rb2));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + RINGBUF_DEFAULT_SIZE - 4);
-    assert(ringbuf_tail(rb2) == ringbuf_base(rb2) + 3);
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1) + 2);
-    assert(ringbuf_head(rb2) == ringbuf_base(rb2) + 4);
+    assert(ringbuf_tail(rb1) == rb1_base + RINGBUF_DEFAULT_SIZE - 4);
+    assert(ringbuf_tail(rb2) == rb2_base + 3);
+    assert(ringbuf_head(rb1) == rb1_base + 2);
+    assert(ringbuf_head(rb2) == rb2_base + 4);
     /* one byte from buf */
     assert(strncmp(ringbuf_tail(rb1), buf + RINGBUF_DEFAULT_SIZE - 4, 1) == 0);
     /* 5 bytes from buf2, 3 at end of contiguous buffer and 2 after the wrap */
     assert(strncmp(ringbuf_tail(rb1) + 1, buf2 + RINGBUF_DEFAULT_SIZE - 2, 3) == 0);
-    assert(strncmp(ringbuf_base(rb1), buf2 + RINGBUF_DEFAULT_SIZE - 2 + 3, 2) == 0);
+    assert(strncmp(rb1_base, buf2 + RINGBUF_DEFAULT_SIZE - 2 + 3, 2) == 0);
     END_TEST(test_num);
 
     /* ringbuf_copy overflow */
@@ -1870,8 +1850,8 @@ main(int argc, char **argv)
     ringbuf_memset(rb2, 2, ringbuf_buffer_size(rb2));
     ringbuf_reset(rb2);
     assert(ringbuf_memcpy_into(rb1, buf, RINGBUF_DEFAULT_SIZE - 1) == ringbuf_head(rb1));
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1) + RINGBUF_DEFAULT_SIZE - 1);
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1));
+    assert(ringbuf_head(rb1) == rb1_base + RINGBUF_DEFAULT_SIZE - 1);
+    assert(ringbuf_tail(rb1) == rb1_base);
     assert(ringbuf_memcpy_into(rb2, buf2, 2) == ringbuf_head(rb2));
     assert(ringbuf_copy(rb1, rb2, 2) == ringbuf_head(rb1));
     assert(ringbuf_capacity(rb1) == RINGBUF_DEFAULT_SIZE - 1);
@@ -1884,13 +1864,13 @@ main(int argc, char **argv)
     assert(!ringbuf_is_full(rb2));
     assert(!ringbuf_is_empty(rb1));
     assert(ringbuf_is_empty(rb2));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1) + 2);
-    assert(ringbuf_tail(rb2) == ringbuf_base(rb2) + 2);
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1) + 1);
-    assert(ringbuf_head(rb2) == ringbuf_base(rb2) + 2);
+    assert(ringbuf_tail(rb1) == rb1_base + 2);
+    assert(ringbuf_tail(rb2) == rb2_base + 2);
+    assert(ringbuf_head(rb1) == rb1_base + 1);
+    assert(ringbuf_head(rb2) == rb2_base + 2);
     assert(strncmp(ringbuf_tail(rb1), buf + 2, RINGBUF_DEFAULT_SIZE - 1 - 2) == 0);
     assert(strncmp(ringbuf_tail(rb1) + RINGBUF_DEFAULT_SIZE - 1 - 2, buf2, 1) == 0);
-    assert(strncmp(ringbuf_base(rb1), buf2 + 1, 1) == 0);
+    assert(strncmp(rb1_base, buf2 + 1, 1) == 0);
     END_TEST(test_num);
 
     /* ringbuf_copy attempted underflow */
@@ -1914,10 +1894,10 @@ main(int argc, char **argv)
     assert(!ringbuf_is_full(rb2));
     assert(!ringbuf_is_empty(rb1));
     assert(!ringbuf_is_empty(rb2));
-    assert(ringbuf_tail(rb1) == ringbuf_base(rb1));
-    assert(ringbuf_tail(rb2) == ringbuf_base(rb2));
-    assert(ringbuf_head(rb1) == ringbuf_base(rb1) + 2);
-    assert(ringbuf_head(rb2) == ringbuf_base(rb2) + 2);
+    assert(ringbuf_tail(rb1) == rb1_base);
+    assert(ringbuf_tail(rb2) == rb2_base);
+    assert(ringbuf_head(rb1) == rb1_base + 2);
+    assert(ringbuf_head(rb2) == rb2_base + 2);
     END_TEST(test_num);
 
     /* ringbuf_findchr */

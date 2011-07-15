@@ -112,12 +112,6 @@ ringbuf_head(const struct ringbuf_t *rb)
     return rb->head;
 }
 
-const void *
-ringbuf_base(const struct ringbuf_t *rb)
-{
-    return rb->buf;
-}
-
 /*
  * Given a ring buffer rb and a pointer to a location within its
  * contiguous buffer, return the a pointer to the next logical
