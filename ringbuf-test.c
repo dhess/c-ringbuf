@@ -173,33 +173,6 @@ main(int argc, char **argv)
     assert(ringbuf_tail(rb1) == ringbuf_base(rb1));
     END_TEST(test_num);
 
-    /* ringbuf_next tests */
-
-    START_NEW_TEST(test_num);
-    ringbuf_reset(rb1);
-    assert(ringbuf_nextp(rb1, ringbuf_head(rb1)) == ringbuf_head(rb1) + 1);
-    END_TEST(test_num);
-           
-    START_NEW_TEST(test_num);
-    ringbuf_reset(rb1);
-    assert(ringbuf_nextp(rb1, ringbuf_base(rb1) + ringbuf_capacity(rb1) - 1) == ringbuf_base(rb1) + ringbuf_capacity(rb1));
-    END_TEST(test_num);
-           
-    START_NEW_TEST(test_num);
-    ringbuf_reset(rb1);
-    assert(ringbuf_nextp(rb1, ringbuf_base(rb1) + ringbuf_capacity(rb1)) == ringbuf_base(rb1));
-    END_TEST(test_num);
-           
-    START_NEW_TEST(test_num);
-    ringbuf_reset(rb1);
-    assert(ringbuf_nextp(rb1, ringbuf_base(rb1) - 1) == 0);
-    END_TEST(test_num);
-           
-    START_NEW_TEST(test_num);
-    ringbuf_reset(rb1);
-    assert(ringbuf_nextp(rb1, ringbuf_base(rb1) + ringbuf_capacity(rb1) + 1) == 0);
-    END_TEST(test_num);
-           
     /* ringbuf_memset with zero count */
     START_NEW_TEST(test_num);
     ringbuf_reset(rb1);

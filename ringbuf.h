@@ -116,17 +116,6 @@ const void *
 ringbuf_base(const struct ringbuf_t *rb);
 
 /*
- * Given a ring buffer rb and a pointer to a location within its
- * contiguous buffer, return the a pointer to the next logical
- * location in the ring buffer.
- *
- * If p does not point somewhere within the ring buffer's contiguous
- * buffer, the function returns 0.
- */
-void *
-ringbuf_nextp(ringbuf_t rb, const void *p);
-
-/*
  * Locate the first occurrence of character c (converted to a char) in
  * ring buffer rb, beginning the search at offset bytes from the ring
  * buffer's tail pointer. The function returns the offset of the

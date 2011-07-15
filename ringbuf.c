@@ -119,23 +119,16 @@ ringbuf_base(const struct ringbuf_t *rb)
 }
 
 /*
- * Same as ringbuf_nextp, minus the range check; used by internal
- * functions where the check is unnecessary.
+ * Given a ring buffer rb and a pointer to a location within its
+ * contiguous buffer, return the a pointer to the next logical
+ * location in the ring buffer.
  */
 static void *
-unchecked_nextp(ringbuf_t rb, const void *p)
-{
-    return rb->buf +
-        ((++p - (const void *) rb->buf) % ringbuf_buffer_size(rb));
-}
-
-void *
 ringbuf_nextp(ringbuf_t rb, const void *p)
 {
-    if (p < (void *) rb->buf || p >= ringbuf_end(rb))
-        return 0;
-    else
-        return unchecked_nextp(rb, p);
+    assert(p >= (void *) rb->buf && p < ringbuf_end(rb));
+    return rb->buf +
+        ((++p - (const void *) rb->buf) % ringbuf_buffer_size(rb));
 }
 
 size_t
@@ -181,7 +174,7 @@ ringbuf_memset(ringbuf_t dst, int c, size_t len)
     }
 
     if (overflow) {
-        dst->tail = unchecked_nextp(dst, dst->head);
+        dst->tail = ringbuf_nextp(dst, dst->head);
         assert(ringbuf_is_full(dst));
     }
 
@@ -209,7 +202,7 @@ ringbuf_memcpy_into(ringbuf_t dst, const void *src, size_t count)
     }
 
     if (overflow) {
-        dst->tail = unchecked_nextp(dst, dst->head);
+        dst->tail = ringbuf_nextp(dst, dst->head);
         assert(ringbuf_is_full(dst));
     }
 
@@ -236,7 +229,7 @@ ringbuf_read(int fd, ringbuf_t rb, size_t count)
 
         /* fix up the tail pointer if an overflow occurred */
         if (n > nfree) {
-            rb->tail = unchecked_nextp(rb, rb->head);
+            rb->tail = ringbuf_nextp(rb, rb->head);
             assert(ringbuf_is_full(rb));
         }
     }
@@ -325,7 +318,7 @@ ringbuf_copy(ringbuf_t dst, ringbuf_t src, size_t count)
     assert(count + ringbuf_bytes_used(src) == src_bytes_used);
     
     if (overflow) {
-        dst->tail = unchecked_nextp(dst, dst->head);
+        dst->tail = ringbuf_nextp(dst, dst->head);
         assert(ringbuf_is_full(dst));
     }
 
