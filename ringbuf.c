@@ -25,14 +25,34 @@
 
 struct ringbuf_t
 {
-    char buf[RINGBUF_DEFAULT_SIZE];
+    void *buf;
+    size_t size;
     void *head, *tail;
 };
+
+ringbuf_t
+ringbuf_new(size_t capacity)
+{
+    ringbuf_t rb = malloc(sizeof(struct ringbuf_t));
+    if (rb) {
+
+        /* One byte is used for detecting the full condition. */
+        rb->size = capacity + 1;
+        rb->buf = malloc(rb->size);
+        if (rb->buf)
+            ringbuf_reset(rb);
+        else {
+            free(rb);
+            return 0;
+        }
+    }
+    return rb;
+}
 
 size_t
 ringbuf_buffer_size(const struct ringbuf_t *rb)
 {
-    return RINGBUF_DEFAULT_SIZE;
+    return rb->size;
 }
 
 void
@@ -41,17 +61,11 @@ ringbuf_reset(ringbuf_t rb)
     rb->head = rb->tail = rb->buf;
 }
 
-ringbuf_t
-ringbuf_new()
-{
-    ringbuf_t rb = malloc(sizeof(struct ringbuf_t));
-    ringbuf_reset(rb);
-    return rb;
-}
-
 void
 ringbuf_free(ringbuf_t *rb)
 {
+    assert(rb && *rb);
+    free((*rb)->buf);
     free(*rb);
     *rb = 0;
 }

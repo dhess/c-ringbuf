@@ -34,9 +34,18 @@
 #include <stddef.h>
 #include <sys/types.h>
 
-#define RINGBUF_DEFAULT_SIZE 4096
-
 typedef struct ringbuf_t *ringbuf_t;
+
+/*
+ * Create a new ring buffer with the given capacity (usable
+ * bytes). Note that the actual internal buffer size may be one or
+ * more bytes larger than the usable capacity, for bookkeeping.
+ *
+ * Returns the new ring buffer object, or 0 if there's not enough
+ * memory to fulfill the request for the given capacity.
+ */
+ringbuf_t
+ringbuf_new(size_t capacity);
 
 /*
  * The size of the internal buffer, in bytes. One or more bytes may be
@@ -48,12 +57,6 @@ typedef struct ringbuf_t *ringbuf_t;
  */
 size_t
 ringbuf_buffer_size(const struct ringbuf_t *rb);
-
-/*
- * Create a new ring buffer.
- */
-ringbuf_t
-ringbuf_new();
 
 /*
  * Deallocate a ring buffer, and, as a side effect, set the pointer to
