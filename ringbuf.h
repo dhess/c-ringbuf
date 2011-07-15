@@ -42,9 +42,12 @@
 typedef struct ringbuf_t *ringbuf_t;
 
 /*
- * The size of the internal buffer, in bytes. One byte will always be
- * unused, to distinguish the "buffer full" state from the "buffer
- * empty" state.
+ * The size of the internal buffer, in bytes. One or more bytes may be
+ * unusable in order to distinguish the "buffer full" state from the
+ * "buffer empty" state.
+ *
+ * For the usable capacity of the ring buffer, use the
+ * ringbuf_capacity function.
  */
 size_t
 ringbuf_buffer_size(const struct ringbuf_t *rb);
@@ -69,7 +72,9 @@ void
 ringbuf_reset(ringbuf_t rb);
 
 /*
- * The usable capacity of the ring buffer, in bytes.
+ * The usable capacity of the ring buffer, in bytes. Note that this
+ * value may be less than the ring buffer's internal buffer size, as
+ * returned by ringbuf_buffer_size.
  */
 size_t
 ringbuf_capacity(const struct ringbuf_t *rb);
