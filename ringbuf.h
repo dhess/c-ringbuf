@@ -161,10 +161,7 @@ ringbuf_memcpy_into(ringbuf_t dst, const void *src, size_t count);
  * This convenience function calls read(2) on the file descriptor fd,
  * using the ring buffer rb as the destination buffer for the read,
  * and returns the value returned by read(2). It will only call
- * read(2) once, and may return a short count, either because read(2)
- * returned a short count, or because the ring buffer must wrap around
- * in order to read more data from the file descriptor; handling the
- * latter condition is the primary reason this function exists.
+ * read(2) once, and may return a short count.
  *
  * It is possible to read more data from the file descriptor than is
  * available in the buffer; i.e., it's possible to overflow the ring
@@ -201,10 +198,7 @@ ringbuf_memcpy_from(void *dst, ringbuf_t src, size_t count);
  * using the ring buffer rb as the source buffer for writing (starting
  * at the ring buffer's tail pointer), and returns the value returned
  * by write(2). It will only call write(2) once, and may return a
- * short count, either because write(2) returned a short count, or
- * because the ring buffer must wrap around in order to write more
- * data to the file descriptor; handling the latter condition is the
- * primary reason this function exists.
+ * short count.
  *
  * Note that this copy is destructive with respect to the ring buffer:
  * any bytes written from the ring buffer to the file descriptor are
