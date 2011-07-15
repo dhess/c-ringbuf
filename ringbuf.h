@@ -25,9 +25,6 @@
  * the starting location where data should be read when copying data
  * *from* the buffer (e.g., with ringbuf_write).
  *
- * The ring buffer is full when the tail pointer is head + 1 (modulo
- * the buffer size).
- *
  * The code is written somewhat pedantically and contains many
  * assert()s to ensure that it's readable and correct. Feel free to
  * optimize the code for use in your own projects once you're
