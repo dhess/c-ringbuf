@@ -17,7 +17,7 @@
  */
 
 /*
- * A naive byte-addressable ring buffer FIFO implementation.
+ * A byte-addressable ring buffer FIFO implementation.
  *
  * The ring buffer's head pointer points to the starting location
  * where data should be written when copying data *into* the buffer
