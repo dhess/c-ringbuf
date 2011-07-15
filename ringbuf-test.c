@@ -767,8 +767,6 @@ main(int argc, char **argv)
     assert(lseek(wrfd, 0, SEEK_SET) == 0);
     /* should return 0 (EOF) */
     assert(read(wrfd, dst, 10) == 0);
-                
-    //assert(strncmp(dst, buf, RINGBUF_SIZE * 2) == 0);
     END_TEST(test_num);
 
     /* ringbuf_write with zero count, non-empty ring buffer */
