@@ -23,6 +23,14 @@
 #include <sys/param.h>
 #include <assert.h>
 
+/*
+ * The code is written for clarity, not cleverness or performance, and
+ * contains many assert()s to enforce invariant assumptions and catch
+ * bugs. Feel free to optimize the code and to remove asserts for use
+ * in your own projects, once you're comfortable that it functions as
+ * intended.
+ */
+
 struct ringbuf_t
 {
     void *buf;

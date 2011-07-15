@@ -24,11 +24,6 @@
  * (e.g., with ringbuf_read). The ring buffer's tail pointer points to
  * the starting location where data should be read when copying data
  * *from* the buffer (e.g., with ringbuf_write).
- *
- * The code is written somewhat pedantically and contains many
- * assert()s to ensure that it's readable and correct. Feel free to
- * optimize the code for use in your own projects once you're
- * comfortable that it functions as intended.
  */
 
 #include <stddef.h>
