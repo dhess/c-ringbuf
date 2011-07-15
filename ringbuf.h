@@ -80,13 +80,15 @@ size_t
 ringbuf_capacity(const struct ringbuf_t *rb);
 
 /*
- * The number of free/available bytes in the ring buffer.
+ * The number of free/available bytes in the ring buffer. This value
+ * is never larger than the ring buffer's usable capacity.
  */
 size_t
 ringbuf_bytes_free(const struct ringbuf_t *rb);
 
 /*
- * The number of bytes currently being used in the ring buffer.
+ * The number of bytes currently being used in the ring buffer. This
+ * value is never larger than the ring buffer's usable capacity.
  */
 size_t
 ringbuf_bytes_used(const struct ringbuf_t *rb);
