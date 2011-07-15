@@ -2196,8 +2196,8 @@ main(int argc, char **argv)
     assert(ringbuf_findchr(rb1, 'd', 1) == ringbuf_bytes_used(rb1));
     END_TEST(test_num);
     
-    free((void *) rb1);
-    free((void *) rb2);
+    ringbuf_free(&rb1);
+    ringbuf_free(&rb2);
     free(buf);
     free(buf2);
     free(dst);
