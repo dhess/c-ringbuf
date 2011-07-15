@@ -112,6 +112,9 @@ ringbuf_head(const struct ringbuf_t *rb);
  * character from the ring buffer's tail pointer, if found. If c does
  * not occur in the ring buffer, the function returns the number of
  * bytes used in the ring buffer.
+ *
+ * Note that the offset parameter and the returned offset are logical
+ * offsets from the tail pointer, not necessarily linear offsets.
  */
 size_t
 ringbuf_findchr(const struct ringbuf_t *rb, int c, size_t offset);
