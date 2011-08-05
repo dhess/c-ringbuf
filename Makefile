@@ -1,5 +1,5 @@
 CC=clang
-CFLAGS=-O0 -g -Wall -ftrapv -fcatch-undefined-behavior
+CFLAGS=-O0 -g -Wall -Wpointer-arith -ftrapv -fcatch-undefined-behavior
 
 # or, for gcc...
 #CC=gcc
