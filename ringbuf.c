@@ -166,7 +166,7 @@ ringbuf_findchr(const struct ringbuf_t *rb, int c, size_t offset)
     size_t n = MIN(bufend - start, bytes_used - offset);
     const uint8_t *found = memchr(start, c, n);
     if (found)
-        return offset + found - start;
+        return offset + (found - start);
     else
         return ringbuf_findchr(rb, c, offset + n);
 }
