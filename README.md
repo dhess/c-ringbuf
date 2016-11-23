@@ -1,5 +1,5 @@
-* WHAT
-  ringbuf is a simple ring buffer implementation in C. 
+# WHAT
+  ringbuf is a simple ring buffer implementation in C.
 
   It includes support for read(2) and write(2) operations on ring
   buffers, memcpy's into and out of ring buffers, setting the buffer
@@ -10,11 +10,11 @@
   It should be fairly straightforward to extend ringbuf to support
   other C library operations that operate on buffers, e.g., recv(2).
 
-* WHY
+# WHY
   I implemented ringbuf because I needed a simple, dependency-free
   ring buffer type for use with network services written in C.
 
-* INSTALLING
+# INSTALLING
   ringbuf is not a library as such, so it doesn't need to be
   installed. Just copy the ringbuf.[ch] source files into your
   project. (Also see LICENSE below.)
@@ -23,7 +23,7 @@
 
   Note that ringbuf.c contains several assert() statements. These are
   intended for use with the test harness (see below), and should
-  probably be removed from production code, once you're confident that
+  probably be removed from production code by defining `RINGBUF_NO_ASSERT`, once you're confident that
   ringbuf works as intended.
 
   This distribution includes source for a test program executable
@@ -38,11 +38,11 @@
   valgrind memory testing, assuming you have those tools installed on
   your system.
 
-* LICENSE
+# LICENSE
   ringbuf has no license; it is dedicated to the public domain. See
   the file COPYING, included in this distribution, for the specifics.
 
-* CONTACT
+# CONTACT
   Drew Hess <dhess-src@bothan.net>
 
   http://drewhess.com/
