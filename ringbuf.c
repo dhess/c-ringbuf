@@ -98,10 +98,11 @@ ringbuf_end(const struct ringbuf_t *rb)
 size_t
 ringbuf_bytes_free(const struct ringbuf_t *rb)
 {
-    if (rb->head >= rb->tail)
-        return ringbuf_capacity(rb) - (rb->head - rb->tail);
+    ssize_t s = rb->head - rb->tail;
+    if (s >= 0)
+        return ringbuf_capacity(rb) - s;
     else
-        return rb->tail - rb->head - 1;
+        return -s - 1;
 }
 
 size_t
