@@ -62,6 +62,8 @@ ringbuf_new(size_t capacity)
 }
 
 /*
+* @brief Bind existing memory to a ringbuffer structure and make it a ringbuffer.
+*
 * This is to bind an existing memory area to a ringbuffer struct for management.
 * This is intended for microcontrollers w/o malloc and with the need for well controlled
 * memory management as the memory is assigned at linking time so we have enough or a linking error.
@@ -69,6 +71,10 @@ ringbuf_new(size_t capacity)
 * areas. So dirty coding can use a dma finished callback and call this routine to bind a ring buffer
 * to the transferred half of the dma memory area but beware of the buffer pointers and threads,
 * know what you code.  
+* @note: This bind assumes that the memory buffer is empty so the pointers are set up to show
+* an empty ring buffer. If you do dirty hacks here, set the pointers for your self after binding
+* the ringbuffer as you should know where the buffer ends and where useful data starts. Just
+* bend ->head and -> tail accordingly. 
 */
 ringbuf_t ringbuf_bind(ringbuf_t ringbuffer, uint8_t *buffer_address) {
 	size_t realcap=0;
