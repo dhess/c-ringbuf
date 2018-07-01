@@ -11,6 +11,10 @@
  * You should have received a copy of the CC0 Public Domain Dedication
  * along with this software. If not, see
  * <http://creativecommons.org/publicdomain/zero/1.0/>.
+ *
+ *
+ * Some code was added by Ludwig Jaffe / levush and this code was donated
+ * to the public domain at the time of writing it.
  */
 
 #include "ringbuf.h"
@@ -56,6 +60,41 @@ ringbuf_new(size_t capacity)
     }
     return rb;
 }
+
+/*
+* This is to bind an existing memory area to a ringbuffer struct for management.
+* This is intended for microcontrollers w/o malloc and with the need for well controlled
+* memory management as the memory is assigned at linking time so we have enough or a linking error.
+* One can expoit this to create a ringbuffer at existing memory buffers, for example dma memory
+* areas. So dirty coding can use a dma finished callback and call this routine to bind a ring buffer
+* to the transferred half of the dma memory area but beware of the buffer pointers and threads,
+* know what you code.  
+*/
+ringbuf_t ringbuf_bind(ringbuf_t ringbuffer, uint8_t *buffer_address) {
+	size_t realcap=0;
+	size_t usercap=0; //user cap is one byte smaller as I fear buffer overruns
+	
+	if (buffer_address!=NULL) {
+		ringbuffer->buf=buffer_address;
+		ringbuffer->head=buffer_address;
+		ringbuffer->tail=buffer_address;
+		
+		//calculate size with the byte stolen for safety
+		realcap=sizeof(buffer_address);
+		if (realcap) usercap=realcap-1;  // no negative
+		else usercap=0; //not enough space
+		ringbuffer->size=usercap;
+	}
+	else	{
+		ringbuffer->buf=NULL;
+		ringbuffer->head=NULL;
+		ringbuffer->tail=NULL;
+		ringbuffer->size=0;
+	}
+	return ringbuffer;
+}	
+		
+		
 
 size_t
 ringbuf_buffer_size(const struct ringbuf_t *rb)
@@ -346,3 +385,32 @@ ringbuf_copy(ringbuf_t dst, ringbuf_t src, size_t count)
 
     return dst->head;
 }
+
+size_t min(size_t a, size_t b) {
+    if(a<b)
+        return a;
+    else
+        return b;
+}
+
+//additions taken from fork of zipper97412/c-ringbuf
+/*poke some data from buffer src into ringbuffer*/
+int ringbuf_memwrite(ringbuf_t rb, size_t* src, size_t offset, size_t len) 
+{
+    src = &(src[offset]);
+    size_t nbToWrite = min(ringbuf_bytes_free(rb), len);
+    ringbuf_memcpy_into(rb, (const void*)src, nbToWrite);
+    return nbToWrite;
+}
+
+//additions taken from fork of zipper97412/c-ringbuf
+/*peek some data from ringbuffer into buffer dst */
+int ringbuf_memread(ringbuf_t rb, size_t* dst, size_t offset, size_t len) 
+{
+    dst = &(dst[offset]);
+    size_t nbToRead = min(ringbuf_bytes_used(rb), len);
+    ringbuf_memcpy_from((void*)dst, rb, nbToRead);
+    return nbToRead;
+}
+
+

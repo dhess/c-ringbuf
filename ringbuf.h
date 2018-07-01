@@ -50,6 +50,18 @@ ringbuf_new(size_t capacity);
  * For the usable capacity of the ring buffer, use the
  * ringbuf_capacity function.
  */
+ 
+/*
+* This is to bind an existing memory area to a ringbuffer struct for management.
+* This is intended for microcontrollers w/o malloc and with the need for well controlled
+* memory management as the memory is assigned at linking time so we have enough or a linking error.
+* One can expoit this to create a ringbuffer at existing memory buffers, for example dma memory
+* areas. So dirty coding can use a dma finished callback and call this routine to bind a ring buffer
+* to the transferred half of the dma memory area but beware of the buffer pointers and threads,
+* know what you code.  
+*/
+ringbuf_t ringbuf_bind(ringbuf_t ringbuffer, uint8_t *buffer_address);
+ 
 size_t
 ringbuf_buffer_size(const struct ringbuf_t *rb);
 
@@ -239,5 +251,13 @@ ringbuf_write(int fd, ringbuf_t rb, size_t count);
  */
 void *
 ringbuf_copy(ringbuf_t dst, ringbuf_t src, size_t count);
+
+//additions taken from fork of zipper97412/c-ringbuf
+
+/*poke some data from buffer src into ringbuffer*/
+int ringbuf_memwrite(ringbuf_t rb, size_t* src, size_t offset, size_t len);
+/*peek some data from ringbuffer into buffer dst */
+int ringbuf_memread(ringbuf_t rb, size_t* dst, size_t offset, size_t len);
+
 
 #endif /* INCLUDED_RINGBUF_H */
