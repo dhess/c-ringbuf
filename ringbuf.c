@@ -21,7 +21,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <sys/param.h>
-#include <assert.h>
 
 /*
  * The code is written for clarity, not cleverness or performance, and

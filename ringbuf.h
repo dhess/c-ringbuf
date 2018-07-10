@@ -1,6 +1,12 @@
 #ifndef INCLUDED_RINGBUF_H
 #define INCLUDED_RINGBUF_H
 
+#ifdef RINGBUF_NO_ASSERT
+#define assert(x...) // x
+#else
+#include <assert.h>
+#endif
+
 /*
  * ringbuf.h - C ring buffer (FIFO) interface.
  *
