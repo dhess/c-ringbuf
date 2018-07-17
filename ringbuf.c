@@ -26,10 +26,22 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
+
+/*
+ * The #include sys/uio.h is not really needed, but was 
+ * added for some reason. So it is kept in the code but 
+ * commented out.
+*/
 //#include <sys/uio.h>
+
 #include <unistd.h>
 #include <sys/param.h>
 
+
+/*
+* To remove assert() calls in production code by #define
+* remove the // comment following this note
+*/
 //#define RINGBUF_NO_ASSERT
 
 #ifndef RINGBUF_NO_ASSERT
@@ -42,7 +54,18 @@
  * bugs. Feel free to optimize the code and to remove asserts for use
  * in your own projects, once you're comfortable that it functions as
  * intended.
+ * Improvements have been added.
  */
+
+
+/*
+* Struct to manage the ringbuffer. One needs a memory range and 
+* a struct variable of this struct to manage a ring buffer. 
+* The data of the ring buffer is kept in the memory range poninted to
+* by uint8_t *buf, while head and tail point to the rolling start and
+* end of the ring buffer, while size knows how many elements are in
+* the ring buffer
+*/
 
 struct ringbuf_t
 {
@@ -51,17 +74,26 @@ struct ringbuf_t
     size_t size;
 };
 
-ringbuf_t
-ringbuf_new(size_t capacity)
+
+/*
+* @brief Allocate new memory for a ringbuffer structure and create it as a ringbuffer.
+*
+* This is to allocate a new memory area and produce a struct for management of it.
+* This is intended for computers with dynamic memory management (malloc, free).
+* @return: returns a ringbuffer_t struct in case of successfull malloc, if the malloc fails,
+* it frees allocated memory and returns 0
+* The ringbuffer is reset in order to initialize it to be empty. 
+*/
+ringbuf_t ringbufNew(size_t capacity)
 {
     ringbuf_t rb = malloc(sizeof(struct ringbuf_t));
     if (rb) {
 
-        /* One byte is used for detecting the full condition. */
-        rb->size = capacity + 1;
+        /* One byte is used for detecting the full condition and to keep distance. */
+        rb->size = capacity + 1;  //distance of one byte to keep distance from overrun
         rb->buf = malloc(rb->size);
         if (rb->buf)
-            ringbuf_reset(rb);
+            ringbufReset(rb);
         else {
             free(rb);
             return 0;
@@ -85,17 +117,17 @@ ringbuf_new(size_t capacity)
 * the ringbuffer as you should know where the buffer ends and where useful data starts. Just
 * bend ->head and -> tail accordingly. 
 */
-ringbuf_t ringbuf_bind(ringbuf_t ringbuffer, uint8_t *buffer_address) {
+ringbuf_t ringbufBind(ringbuf_t ringbuffer, uint8_t *bufferAddress) {
 	size_t realcap=0;
 	size_t usercap=0; //user cap is one byte smaller as I fear buffer overruns
 	
-	if (buffer_address!=NULL) {
-		ringbuffer->buf=buffer_address;
-		ringbuffer->head=buffer_address;
-		ringbuffer->tail=buffer_address;
+	if (bufferAddress!=NULL) {
+		ringbuffer->buf=bufferAddress;
+		ringbuffer->head=bufferAddress;
+		ringbuffer->tail=bufferAddress;
 		
 		//calculate size with the byte stolen for safety
-		realcap=sizeof(buffer_address);
+		realcap=sizeof(bufferAddress);
 		if (realcap) usercap=realcap-1;  // no negative
 		else usercap=0; //not enough space
 		ringbuffer->size=usercap;
@@ -111,20 +143,17 @@ ringbuf_t ringbuf_bind(ringbuf_t ringbuffer, uint8_t *buffer_address) {
 		
 		
 
-size_t
-ringbuf_buffer_size(const struct ringbuf_t *rb)
+size_t ringbufBufferSize(const struct ringbuf_t *rb)
 {
     return rb->size;
 }
 
-void
-ringbuf_reset(ringbuf_t rb)
+void ringbufReset(ringbuf_t rb)
 {
     rb->head = rb->tail = rb->buf;
 }
 
-void
-ringbuf_free(ringbuf_t *rb)
+void ringbufFree(ringbuf_t *rb)
 {
     #ifndef RINGBUF_NO_ASSERT
     assert(rb && *rb);
@@ -134,10 +163,9 @@ ringbuf_free(ringbuf_t *rb)
     *rb = 0;
 }
 
-size_t
-ringbuf_capacity(const struct ringbuf_t *rb)
+size_t ringbufCapacity(const struct ringbuf_t *rb)
 {
-    return ringbuf_buffer_size(rb) - 1;
+    return ringbufBufferSize(rb) - 1;
 }
 
 /*
@@ -145,14 +173,12 @@ ringbuf_capacity(const struct ringbuf_t *rb)
  * contiguous buffer. You shouldn't normally need to use this function
  * unless you're writing a new ringbuf_* function.
  */
-static const uint8_t *
-ringbuf_end(const struct ringbuf_t *rb)
+static const uint8_t *ringbufEnd(const struct ringbuf_t *rb)
 {
-    return rb->buf + ringbuf_buffer_size(rb);
+    return rb->buf + ringbufBufferSize(rb);
 }
 
-size_t
-ringbuf_bytes_free(const struct ringbuf_t *rb)
+size_t ringbufBytesFree(const struct ringbuf_t *rb)
 {
     ssize_t s = rb->head - rb->tail;
     if (s >= 0)
@@ -162,31 +188,27 @@ ringbuf_bytes_free(const struct ringbuf_t *rb)
 }
 
 size_t
-ringbuf_bytes_used(const struct ringbuf_t *rb)
+ringbufBytesUsed(const struct ringbuf_t *rb)
 {
-    return ringbuf_capacity(rb) - ringbuf_bytes_free(rb);
+    return ringbufCapacity(rb) - ringbuf_bytes_free(rb);
 }
 
-int
-ringbuf_is_full(const struct ringbuf_t *rb)
+int ringbufIsFull(const struct ringbuf_t *rb)
 {
-    return ringbuf_bytes_free(rb) == 0;
+    return ringbufBytesFree(rb) == 0;
 }
 
-int
-ringbuf_is_empty(const struct ringbuf_t *rb)
+int ringbufIsEmpty(const struct ringbuf_t *rb)
 {
-    return ringbuf_bytes_free(rb) == ringbuf_capacity(rb);
+    return ringbufBytesFree(rb) == ringbuf_capacity(rb);
 }
 
-const void *
-ringbuf_tail(const struct ringbuf_t *rb)
+const void *ringbufTail(const struct ringbuf_t *rb)
 {
     return rb->tail;
 }
 
-const void *
-ringbuf_head(const struct ringbuf_t *rb)
+const void *ringbufHead(const struct ringbuf_t *rb)
 {
     return rb->head;
 }
@@ -196,8 +218,7 @@ ringbuf_head(const struct ringbuf_t *rb)
  * contiguous buffer, return the a pointer to the next logical
  * location in the ring buffer.
  */
-static uint8_t *
-ringbuf_nextp(ringbuf_t rb, const uint8_t *p)
+static uint8_t *ringbufNextp(ringbuf_t rb, const uint8_t *p)
 {
     /*
      * The assert guarantees the expression (++p - rb->buf) is
@@ -207,11 +228,10 @@ ringbuf_nextp(ringbuf_t rb, const uint8_t *p)
     #ifndef RINGBUF_NO_ASSERT
     assert((p >= rb->buf) && (p < ringbuf_end(rb)));
     #endif /* !RINGBUF_NO_ASSERT */
-    return rb->buf + ((++p - rb->buf) % ringbuf_buffer_size(rb));
+    return rb->buf + ((++p - rb->buf) % ringbufBufferSize(rb));
 }
 
-size_t
-ringbuf_findchr(const struct ringbuf_t *rb, int c, size_t offset)
+size_t ringbufFindChr(const struct ringbuf_t *rb, int c, size_t offset)
 {
     const uint8_t *bufend = ringbuf_end(rb);
     size_t bytes_used = ringbuf_bytes_used(rb);
@@ -219,7 +239,7 @@ ringbuf_findchr(const struct ringbuf_t *rb, int c, size_t offset)
         return bytes_used;
 
     const uint8_t *start = rb->buf +
-        (((rb->tail - rb->buf) + offset) % ringbuf_buffer_size(rb));
+        (((rb->tail - rb->buf) + offset) % ringbufBufferSize(rb));
     #ifndef RINGBUF_NO_ASSERT
     assert(bufend > start);
     #endif /* !RINGBUF_NO_ASSERT */
@@ -231,12 +251,11 @@ ringbuf_findchr(const struct ringbuf_t *rb, int c, size_t offset)
         return ringbuf_findchr(rb, c, offset + n);
 }
 
-size_t
-ringbuf_memset(ringbuf_t dst, int c, size_t len)
+size_t ringbufMemset(ringbuf_t dst, int c, size_t len)
 {
     const uint8_t *bufend = ringbuf_end(dst);
     size_t nwritten = 0;
-    size_t count = MIN(len, ringbuf_buffer_size(dst));
+    size_t count = MIN(len, ringbufBufferSize(dst));
     int overflow = count > ringbuf_bytes_free(dst);
 
     while (nwritten != count) {
@@ -265,8 +284,7 @@ ringbuf_memset(ringbuf_t dst, int c, size_t len)
     return nwritten;
 }
 
-void *
-ringbuf_memcpy_into(ringbuf_t dst, const void *src, size_t count)
+void *ringbufMemcpyInto(ringbuf_t dst, const void *src, size_t count)
 {
     const uint8_t *u8src = src;
     const uint8_t *bufend = ringbuf_end(dst);
@@ -298,8 +316,7 @@ ringbuf_memcpy_into(ringbuf_t dst, const void *src, size_t count)
     return dst->head;
 }
 
-ssize_t
-ringbuf_read(int fd, ringbuf_t rb, size_t count)
+ssize_t ringbufRead(int fd, ringbuf_t rb, size_t count)
 {
     const uint8_t *bufend = ringbuf_end(rb);
     size_t nfree = ringbuf_bytes_free(rb);
@@ -332,8 +349,7 @@ ringbuf_read(int fd, ringbuf_t rb, size_t count)
     return n;
 }
 
-void *
-ringbuf_memcpy_from(void *dst, ringbuf_t src, size_t count)
+void *ringbufMemcpyFrom(void *dst, ringbuf_t src, size_t count)
 {
     size_t bytes_used = ringbuf_bytes_used(src);
     if (count > bytes_used)
@@ -361,8 +377,7 @@ ringbuf_memcpy_from(void *dst, ringbuf_t src, size_t count)
     return src->tail;
 }
 
-ssize_t
-ringbuf_write(int fd, ringbuf_t rb, size_t count)
+ssize_t ringbufWrite(int fd, ringbuf_t rb, size_t count)
 {
     size_t bytes_used = ringbuf_bytes_used(rb);
     if (count > bytes_used)
@@ -391,8 +406,7 @@ ringbuf_write(int fd, ringbuf_t rb, size_t count)
     return n;
 }
 
-void *
-ringbuf_copy(ringbuf_t dst, ringbuf_t src, size_t count)
+void *ringbufCopy(ringbuf_t dst, ringbuf_t src, size_t count)
 {
     size_t src_bytes_used = ringbuf_bytes_used(src);
     if (count > src_bytes_used)
@@ -443,8 +457,8 @@ size_t min(size_t a, size_t b) {
 }
 
 //additions taken from fork of zipper97412/c-ringbuf
-/*poke some data from buffer src into ringbuffer*/
-int ringbuf_memwrite(ringbuf_t rb, size_t* src, size_t offset, size_t len) 
+/*poke some data from buffer src starting from offset into ringbuffer*/
+int ringbufMemwrite(ringbuf_t rb, size_t* src, size_t offset, size_t len) 
 {
     src = &(src[offset]);
     size_t nbToWrite = min(ringbuf_bytes_free(rb), len);
@@ -453,13 +467,102 @@ int ringbuf_memwrite(ringbuf_t rb, size_t* src, size_t offset, size_t len)
 }
 
 //additions taken from fork of zipper97412/c-ringbuf
-/*peek some data from ringbuffer into buffer dst */
-int ringbuf_memread(ringbuf_t rb, size_t* dst, size_t offset, size_t len) 
+/*peek some data from ringbuffer into buffer dst starting at offset.
+ *Use this to combine strings in a destination buffer.
+ */
+int ringbufMemread(ringbuf_t rb, size_t* dst, size_t offset, size_t len) 
 {
     dst = &(dst[offset]);
     size_t nbToRead = min(ringbuf_bytes_used(rb), len);
     ringbuf_memcpy_from((void*)dst, rb, nbToRead);
     return nbToRead;
 }
+
+
+/*
+ *  D M A
+ *  to be done ...
+ */
+
+/*
+ * Read data from peripheral to ringbuffer using DMA
+ * How to fill the ringbuffer using DMA:
+ * In order to fill the ringbuffer using a DMA it is wise to use small increments on the DMA-controller
+ * so the CPU gets some time to breathe and the foreground task that serves the other end of the ringbuffer
+ * can do its part.
+ *
+ * The following strategy can be used:
+ * Lets say the DMA controller is set-up to transfer 16Byte at a time from an UART to the ringbuffer.
+ * We have a call back for DMA-Transfer-Half-Complete and DMA-Transfer-Complete.
+ * 
+ * The strategy is to let the DMA climb the memory area underlying the ringbuffer if this area is not 
+ * occupied by valid data to be read of the ring buffer.
+ * At the call back DMA-complete and DMA-half-complete we set the write-pointer which is head of the ringbuffer
+ * to the new end of valid data. Then we look for the tail pointer if it points to a memory patch that will
+ * be overwritten by the next DMA transfer. If the tail ponter points out of our way, we initiate the next
+ * DMA transfer with the next memory patch, which climed the buffer.
+ * As we should use dubble buffering with DMA we prepare the patch+1 while we wait for patch. 
+ *
+
+ * +---------------------------------------------------+ -> callback DMA complete -> set Head (rb->head) to here
+ * !  3rd DMA BLOCK: Top Half                          !
+ * !                                                   !
+ * !                                                   !
+ * !                                                   !
+ * +- - - - - - - - - - - - - - - - - - - - - - - - - -+ -> callback DMA-Half complete -> set Head (rb->head) to here
+ * !  3rd DMA BLOCK: Bottom Half                       !
+ * !                                                   !    and enable DMA only if rb->tail does not point to the memory area to be 
+ * !                                                   !    filled by the next DMA
+ * !                                                   !
+ * +---------------------------------------------------+ -> callback DMA complete -> set Head (rb->head) to here
+ * !  2nd DMA BLOCK: Top Half                          !
+ * !                                                   !
+ * !                                                   !
+ * !                                                   !
+ * +- - - - - - - - - - - - - - - - - - - - - - - - - -+ -> callback DMA-Half complete -> set Head (rb->head) to here
+ * !  2nd DMA BLOCK: Bottom Half                       !    and prepare DMA (set up DMA-controller for new addresses) for 2nd Block
+ * !                                                   !    and enable DMA only if rb->tail does not point to the memory area to be 
+ * !                                                   !    filled by the next DMA
+ * !                                                   !
+ * +---------------------------------------------------+ -> callback DMA complete -> set Head (rb->head) to here
+ * !  1st DMA BLOCK: Top Half                          !
+ * !                                                   !
+ * !                                                   !
+ * !                                                   !
+ * +- - - - - - - - - - - - - - - - - - - - - - - - - -+ -> callback DMA-Half complete -> set Head (rb->head) to here
+ * !  1st DMA BLOCK: Bottom Half                       !    and prepare DMA (set up DMA-controller for new addresses) for 2nd Block
+ * !                                                   !    and enable DMA only if rb->tail does not point to the memory area to be 
+ * !                                                   !    filled by the next DMA
+ * !                                                   !
+ * +---------------------------------------------------+<---Head (rb->head)
+ * !  old data that was transfered using DMA           !
+ * !                                                   !<---Tail (rb->tail)  ^ 
+ * !                                                   !                     !
+ * !                                                   !
+ * +- - - - - - - - - - - - - - - - - - - - - - - - - -+ 
+ * !                                                   !
+ * !                                                   !
+ * !                                                   !
+ * !                                                   !
+ * +---------------------------------------------------+
+ *
+ *
+ *
+ *
+ */
+void ringbufDMArx(ringbuf_t rb) 
+{
+	
+}
+
+
+/*
+ * Send data from ringbuffer to peripheral using DMA
+ */
+void ringbufDMAtx(ringbuf_t rb) 
+{
+	
+}
+
 
 
