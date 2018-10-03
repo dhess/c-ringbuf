@@ -28,6 +28,9 @@
 
 #include <stddef.h>
 #include <sys/types.h>
+#ifdef _MSC_VER
+	typedef ptrdiff_t ssize_t;
+#endif
 
 typedef struct ringbuf_t *ringbuf_t;
 
