@@ -64,6 +64,6 @@ Please respect the code formatting rules I've used for this project. There are a
   * Macros in `UPPER_CASE`, using underscores (`_`) as separators.
   * Everything else in `lower_case`, using underscores (`_`) as separators.
 
-For other formatting, I'm less picky, but generally speaking, just look for an example of in the existing code base and follow it. (It's quite possible that I myself have been inconsistent in a few places. Feel free to point these cases out to me by opening an issue, if you like.)
+For other formatting, I'm less picky, but generally speaking, just look for an example in the existing code base and follow it. (It's quite possible that I myself have been inconsistent in a few places. Feel free to point these cases out to me by opening an issue, if you like.)
 
 I reserve the right to reject PRs purely based on their formatting. Please do not take it personally it if happens to you; everyone has their own quirky way of formatting code, and mine is no better than anyone else's, but I think it's important to be consistent within a project.
