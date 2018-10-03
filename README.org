@@ -42,6 +42,37 @@
   ringbuf has no license; it is dedicated to the public domain. See
   the file COPYING, included in this distribution, for the specifics.
 
+* CONTRIBUTING
+
+  If you would like to make a pull request (PR) or other contribution
+  to this project, please follow these guidelines:
+
+  - Make one PR/patch per feature. Do not lump multiple features into
+    a single PR. One PR per feature is a hassle for contributors, and
+    for that I am sorry; but it makes reviewing contributions easier,
+    and it also means that, if your contribution creates a bug or
+    other issue, it's easier to track down the root cause. This policy
+    also increases the likelihood that your PRs will be accepted in
+    the case where there is an issue with one part of your PR, but the
+    rest is fine. If you are in doubt about what constitutes "a
+    feature," please contact me before making a pull request so that
+    we can sort it out.
+
+  - Make sure you have run all tests successfully before submitting
+    your PR. If you are adding functionality, please add new tests to
+    the test suite to exercise that functionality. If your PR fixes a
+    bug, please write a test(s) that demonstrates a) the bug on the
+    existing code base, and b) fixes the bug once your patch is
+    applied.
+
+  - By submitting a PR, or otherwise asking me to apply any code to
+    this code base, you are agreeing that your contribution is
+    dedicated to the public domain per the COPYING file included in
+    this distribution, and that you are waiving any copyright claims
+    with respect to your contribution. You also assert that this
+    contribution is your own creation, and not taken from another
+    work.
+
 * CONTACT
   Drew Hess <dhess-src@bothan.net>
 
