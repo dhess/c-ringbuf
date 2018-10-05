@@ -23,6 +23,9 @@
 #include <sys/param.h>
 #include <assert.h>
 
+#ifndef MIN
+#define MIN(x,y) ((x)>(y)?(y):(x))
+#endif
 /*
  * The code is written for clarity, not cleverness or performance, and
  * contains many assert()s to enforce invariant assumptions and catch
