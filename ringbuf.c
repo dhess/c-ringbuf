@@ -26,7 +26,7 @@
 /*
  * The code is written for clarity, not cleverness or performance, and
  * contains many assert()s to enforce invariant assumptions and catch
- * bugs. Feel free to optimize the code and to remove asserts for use
+ * bugs. Feel rb_free to optimize the code and to remove asserts for use
  * in your own projects, once you're comfortable that it functions as
  * intended.
  */
@@ -41,16 +41,16 @@ struct ringbuf_t
 ringbuf_t
 ringbuf_new(size_t capacity)
 {
-    ringbuf_t rb = malloc(sizeof(struct ringbuf_t));
+    ringbuf_t rb = rb_malloc(sizeof(struct ringbuf_t));
     if (rb) {
 
         /* One byte is used for detecting the full condition. */
         rb->size = capacity + 1;
-        rb->buf = malloc(rb->size);
+        rb->buf = rb_malloc(rb->size);
         if (rb->buf)
             ringbuf_reset(rb);
         else {
-            free(rb);
+            rb_free(rb);
             return 0;
         }
     }
@@ -73,8 +73,8 @@ void
 ringbuf_free(ringbuf_t *rb)
 {
     assert(rb && *rb);
-    free((*rb)->buf);
-    free(*rb);
+    rb_free((*rb)->buf);
+    rb_free(*rb);
     *rb = 0;
 }
 

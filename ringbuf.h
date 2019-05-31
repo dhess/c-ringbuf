@@ -31,6 +31,22 @@
 
 typedef struct ringbuf_t *ringbuf_t;
 
+
+/* 
+* The default rb_malloc, rb_free points to malloc 
+* and free functions, you can redefine these two functions
+* before, for example, in FreeRTOS, you can use #define 
+* rb_malloc pvPortMalloc to use the RTOS heap memory 
+* allocation API
+*/
+#ifndef rb_malloc 
+#define rb_malloc malloc
+#endif 
+
+#ifndef rb_free 
+#define rb_free free
+#endif
+
 /*
  * Create a new ring buffer with the given capacity (usable
  * bytes). Note that the actual internal buffer size may be one or
