@@ -1,4 +1,4 @@
-# WHAT
+# WHAT-do you expect here?
 
 `c-ringbuf` is a simple ring buffer implementation in C.
 
@@ -6,7 +6,7 @@ It includes support for `read(2)` and `write(2)` operations on ring buffers, `me
 
 It should be fairly straightforward to extend `c-ringbuf` to support other C library operations that operate on buffers, e.g., `recv(2)`.
 
-# WHY
+# WHY -i need this?
 
 I implemented `c-ringbuf` because I needed a simple, dependency-free ring buffer type for use with network services written in C.
 
