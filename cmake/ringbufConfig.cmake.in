@@ -1,0 +1,10 @@
+get_filename_component(RINGBUF_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+include(CMakeFindDependencyMacro)
+
+list(APPEND CMAKE_MODULE_PATH ${RINGBUF_CMAKE_DIR})
+
+if(NOT TARGET ringbuf::ringbuf)
+    include("${RINGBUF_CMAKE_DIR}/ringbufTargets.cmake")
+endif()
+
+set(RINGBUF_LIBRARIES ringbuf::ringbuf)
