@@ -32,6 +32,12 @@
 struct ringbuf_t;
 typedef struct ringbuf_t* ringbuf;
 
+#ifdef __cplusplus
+    #define EXPORT_API extern "C" __attribute__((visibility("default")))
+#else
+    #define EXPORT_API __attribute__((visibility("default")))
+#endif
+
 /*
  * Create a new ring buffer with the given capacity (usable
  * bytes). Note that the actual internal buffer size may be one or
@@ -40,8 +46,7 @@ typedef struct ringbuf_t* ringbuf;
  * Returns the new ring buffer object, or 0 if there's not enough
  * memory to fulfill the request for the given capacity.
  */
-ringbuf
-ringbuf_new(size_t capacity);
+EXPORT_API ringbuf ringbuf_new(size_t capacity);
 
 /*
  * The size of the internal buffer, in bytes. One or more bytes may be
@@ -51,21 +56,18 @@ ringbuf_new(size_t capacity);
  * For the usable capacity of the ring buffer, use the
  * ringbuf_capacity function.
  */
-size_t
-ringbuf_buffer_size(const ringbuf rb);
+EXPORT_API size_t ringbuf_buffer_size(const ringbuf rb);
 
 /*
  * Deallocate a ring buffer, and, as a side effect, set the pointer to
  * 0.
  */
-void
-ringbuf_free(ringbuf* rb);
+EXPORT_API void ringbuf_free(ringbuf* rb);
 
 /*
  * Reset a ring buffer to its initial state (empty).
  */
-void
-ringbuf_reset(ringbuf rb);
+EXPORT_API void ringbuf_reset(ringbuf rb);
 
 /*
  * The usable capacity of the ring buffer, in bytes. Note that this
@@ -86,23 +88,18 @@ ringbuf_bytes_free(const ringbuf rb);
  * The number of bytes currently being used in the ring buffer. This
  * value is never larger than the ring buffer's usable capacity.
  */
-size_t
-ringbuf_bytes_used(const ringbuf rb);
+EXPORT_API size_t ringbuf_bytes_used(const ringbuf rb);
 
-int
-ringbuf_is_full(const ringbuf rb);
+EXPORT_API int ringbuf_is_full(const ringbuf rb);
 
-int
-ringbuf_is_empty(const ringbuf rb);
+EXPORT_API int ringbuf_is_empty(const ringbuf rb);
 
 /*
  * Const access to the head and tail pointers of the ring buffer.
  */
-const void *
-ringbuf_tail(const ringbuf rb);
+EXPORT_API const void* ringbuf_tail(const ringbuf rb);
 
-const void *
-ringbuf_head(const ringbuf rb);
+EXPORT_API const void* ringbuf_head(const ringbuf rb);
 
 /*
  * Locate the first occurrence of character c (converted to an
@@ -115,8 +112,7 @@ ringbuf_head(const ringbuf rb);
  * Note that the offset parameter and the returned offset are logical
  * offsets from the tail pointer, not necessarily linear offsets.
  */
-size_t
-ringbuf_findchr(const ringbuf rb, int c, size_t offset);
+EXPORT_API size_t ringbuf_findchr(const ringbuf rb, int c, size_t offset);
 
 /*
  * Beginning at ring buffer dst's head pointer, fill the ring buffer
@@ -137,8 +133,7 @@ ringbuf_findchr(const ringbuf rb, int c, size_t offset);
  * Returns the actual number of bytes written to dst: len, if
  * len < ringbuf_buffer_size(dst), else ringbuf_buffer_size(dst).
  */
-size_t
-ringbuf_memset(ringbuf dst, int c, size_t len);
+EXPORT_API size_t ringbuf_memset(ringbuf dst, int c, size_t len);
 
 /*
  * Copy n bytes from a contiguous memory area src into the ring buffer
@@ -153,8 +148,7 @@ ringbuf_memset(ringbuf dst, int c, size_t len);
  * overflow, the value of the ring buffer's tail pointer may be
  * different than it was before the function was called.
  */
-void *
-ringbuf_memcpy_into(ringbuf dst, const void *src, size_t count);
+EXPORT_API void* ringbuf_memcpy_into(ringbuf dst, const void *src, size_t count);
 
 /*
  * This convenience function calls read(2) on the file descriptor fd,
@@ -171,8 +165,7 @@ ringbuf_memcpy_into(ringbuf dst, const void *src, size_t count);
  * results in an overflow, the value of the ring buffer's tail pointer
  * may be different than it was before the function was called.
  */
-ssize_t
-ringbuf_read(int fd, ringbuf rb, size_t count);
+EXPORT_API ssize_t ringbuf_read(int fd, ringbuf rb, size_t count);
 
 /*
  * Copy n bytes from the ring buffer src, starting from its tail
@@ -189,8 +182,7 @@ ringbuf_read(int fd, ringbuf rb, size_t count);
  * count is greater than the number of bytes used in the ring buffer,
  * no bytes are copied, and the function will return 0.
  */
-void *
-ringbuf_memcpy_from(void *dst, ringbuf src, size_t count);
+EXPORT_API void * ringbuf_memcpy_from(void *dst, ringbuf src, size_t count);
 
 /*
  * This convenience function calls write(2) on the file descriptor fd,
@@ -212,8 +204,7 @@ ringbuf_memcpy_from(void *dst, ringbuf src, size_t count);
  * no bytes are written to the file descriptor, and the function will
  * return 0.
  */
-ssize_t
-ringbuf_write(int fd, ringbuf rb, size_t count);
+EXPORT_API ssize_t ringbuf_write(int fd, ringbuf rb, size_t count);
 
 /*
  * Copy count bytes from ring buffer src, starting from its tail
@@ -238,7 +229,6 @@ ringbuf_write(int fd, ringbuf rb, size_t count);
  * number of bytes used in src, no bytes are copied, and the function
  * returns 0.
  */
-void *
-ringbuf_copy(ringbuf dst, ringbuf src, size_t count);
+EXPORT_API void* ringbuf_copy(ringbuf dst, ringbuf src, size_t count);
 
 #endif /* INCLUDED_RINGBUF_H */
