@@ -8,6 +8,7 @@ option(BUILD_SHARED_LIBS "Build shared libraries (.dll/.so) instead of static on
 add_library(${PROJECT_NAME} ringbuf.c)
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY C_STANDARD 99)
+set_property(TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
 set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(${PROJECT_NAME} PROPERTIES SOVERSION 0)
 
