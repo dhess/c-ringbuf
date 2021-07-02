@@ -74,15 +74,13 @@ EXPORT_API void ringbuf_reset(ringbuf rb);
  * value may be less than the ring buffer's internal buffer size, as
  * returned by ringbuf_buffer_size.
  */
-size_t
-ringbuf_capacity(const ringbuf rb);
+EXPORT_API size_t ringbuf_capacity(const ringbuf rb);
 
 /*
  * The number of free/available bytes in the ring buffer. This value
  * is never larger than the ring buffer's usable capacity.
  */
-size_t
-ringbuf_bytes_free(const ringbuf rb);
+EXPORT_API size_t ringbuf_bytes_free(const ringbuf rb);
 
 /*
  * The number of bytes currently being used in the ring buffer. This
