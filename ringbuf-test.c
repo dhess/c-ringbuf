@@ -94,7 +94,7 @@ main(int argc, char **argv)
         exit(99);
     }
 
-    ringbuf_t rb1 = ringbuf_new(RINGBUF_SIZE - 1);
+    ringbuf_ptr rb1 = ringbuf_new(RINGBUF_SIZE - 1);
 
     int test_num = 0;
 
@@ -1487,7 +1487,7 @@ main(int argc, char **argv)
     assert(ringbuf_tail(rb1) == rb1_base);
     END_TEST(test_num);
 
-    ringbuf_t rb2 = ringbuf_new(RINGBUF_SIZE - 1);
+    ringbuf_ptr rb2 = ringbuf_new(RINGBUF_SIZE - 1);
     const uint8_t *rb2_base = ringbuf_head(rb2);
     
     /* ringbuf_copy with zero count, empty buffers */
@@ -1922,7 +1922,7 @@ main(int argc, char **argv)
 
     /* ringbuf_copy, different capacities, overflow 2nd */
     START_NEW_TEST(test_num);
-    ringbuf_t rb3 = ringbuf_new(8);
+    ringbuf_ptr rb3 = ringbuf_new(8);
     const uint8_t *rb3_base = ringbuf_head(rb3);
     ringbuf_memset(rb1, 1, ringbuf_buffer_size(rb1));
     ringbuf_reset(rb1);

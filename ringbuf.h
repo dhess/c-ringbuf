@@ -29,7 +29,7 @@
 #include <stddef.h>
 #include <sys/types.h>
 
-typedef struct ringbuf_t *ringbuf_t;
+typedef struct ringbuf_t *ringbuf_ptr;
 
 /*
  * Create a new ring buffer with the given capacity (usable
@@ -39,7 +39,7 @@ typedef struct ringbuf_t *ringbuf_t;
  * Returns the new ring buffer object, or 0 if there's not enough
  * memory to fulfill the request for the given capacity.
  */
-ringbuf_t
+ringbuf_ptr
 ringbuf_new(size_t capacity);
 
 /*
@@ -58,13 +58,13 @@ ringbuf_buffer_size(const struct ringbuf_t *rb);
  * 0.
  */
 void
-ringbuf_free(ringbuf_t *rb);
+ringbuf_free(ringbuf_ptr *rb);
 
 /*
  * Reset a ring buffer to its initial state (empty).
  */
 void
-ringbuf_reset(ringbuf_t rb);
+ringbuf_reset(ringbuf_ptr rb);
 
 /*
  * The usable capacity of the ring buffer, in bytes. Note that this
@@ -137,7 +137,7 @@ ringbuf_findchr(const struct ringbuf_t *rb, int c, size_t offset);
  * len < ringbuf_buffer_size(dst), else ringbuf_buffer_size(dst).
  */
 size_t
-ringbuf_memset(ringbuf_t dst, int c, size_t len);
+ringbuf_memset(ringbuf_ptr dst, int c, size_t len);
 
 /*
  * Copy n bytes from a contiguous memory area src into the ring buffer
@@ -153,7 +153,7 @@ ringbuf_memset(ringbuf_t dst, int c, size_t len);
  * different than it was before the function was called.
  */
 void *
-ringbuf_memcpy_into(ringbuf_t dst, const void *src, size_t count);
+ringbuf_memcpy_into(ringbuf_ptr dst, const void *src, size_t count);
 
 /*
  * This convenience function calls read(2) on the file descriptor fd,
@@ -171,7 +171,7 @@ ringbuf_memcpy_into(ringbuf_t dst, const void *src, size_t count);
  * may be different than it was before the function was called.
  */
 ssize_t
-ringbuf_read(int fd, ringbuf_t rb, size_t count);
+ringbuf_read(int fd, ringbuf_ptr rb, size_t count);
 
 /*
  * Copy n bytes from the ring buffer src, starting from its tail
@@ -189,7 +189,7 @@ ringbuf_read(int fd, ringbuf_t rb, size_t count);
  * no bytes are copied, and the function will return 0.
  */
 void *
-ringbuf_memcpy_from(void *dst, ringbuf_t src, size_t count);
+ringbuf_memcpy_from(void *dst, ringbuf_ptr src, size_t count);
 
 /*
  * This convenience function calls write(2) on the file descriptor fd,
@@ -212,7 +212,7 @@ ringbuf_memcpy_from(void *dst, ringbuf_t src, size_t count);
  * return 0.
  */
 ssize_t
-ringbuf_write(int fd, ringbuf_t rb, size_t count);
+ringbuf_write(int fd, ringbuf_ptr rb, size_t count);
 
 /*
  * Copy count bytes from ring buffer src, starting from its tail
@@ -238,6 +238,6 @@ ringbuf_write(int fd, ringbuf_t rb, size_t count);
  * returns 0.
  */
 void *
-ringbuf_copy(ringbuf_t dst, ringbuf_t src, size_t count);
+ringbuf_copy(ringbuf_ptr dst, ringbuf_ptr src, size_t count);
 
 #endif /* INCLUDED_RINGBUF_H */
