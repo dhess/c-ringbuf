@@ -41,12 +41,12 @@ struct ringbuf_t
 ringbuf_ptr
 ringbuf_new(size_t capacity)
 {
-    ringbuf_ptr rb = malloc(sizeof(struct ringbuf_t));
+    ringbuf_ptr rb = (ringbuf_ptr) malloc(sizeof(struct ringbuf_t));
     if (rb) {
 
         /* One byte is used for detecting the full condition. */
         rb->size = capacity + 1;
-        rb->buf = malloc(rb->size);
+        rb->buf = (uint8_t *) malloc(rb->size);
         if (rb->buf)
             ringbuf_reset(rb);
         else {
@@ -163,7 +163,7 @@ ringbuf_findchr(const struct ringbuf_t *rb, int c, size_t offset)
         (((rb->tail - rb->buf) + offset) % ringbuf_buffer_size(rb));
     assert(bufend > start);
     size_t n = MIN(bufend - start, bytes_used - offset);
-    const uint8_t *found = memchr(start, c, n);
+    const uint8_t *found = (const uint8_t *) memchr(start, c, n);
     if (found)
         return offset + (found - start);
     else
@@ -203,7 +203,7 @@ ringbuf_memset(ringbuf_ptr dst, int c, size_t len)
 void *
 ringbuf_memcpy_into(ringbuf_ptr dst, const void *src, size_t count)
 {
-    const uint8_t *u8src = src;
+    const uint8_t *u8src = (const uint8_t *) src;
     const uint8_t *bufend = ringbuf_end(dst);
     int overflow = count > ringbuf_bytes_free(dst);
     size_t nread = 0;
@@ -264,7 +264,7 @@ ringbuf_memcpy_from(void *dst, ringbuf_ptr src, size_t count)
     if (count > bytes_used)
         return 0;
 
-    uint8_t *u8dst = dst;
+    uint8_t *u8dst = (uint8_t *) dst;
     const uint8_t *bufend = ringbuf_end(src);
     size_t nwritten = 0;
     while (nwritten != count) {
