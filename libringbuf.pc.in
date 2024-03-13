@@ -1,0 +1,11 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+
+includedir=@includedir@
+libdir=@libdir@
+
+Name: @PACKAGE_NAME@
+Description: A ring buffer implemented in C
+Version: @LIBRINGBUF_PKG_CONFIG_VERSION@
+Libs: -L${libdir} -lringbuf
+Cflags: -I${includedir}
